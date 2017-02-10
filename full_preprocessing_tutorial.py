@@ -43,7 +43,6 @@ def load_scan(path):
 
 
 
-
 def get_pixels_hu(slices):
 	image = np.stack([s.pixel_array for s in slices])
 	# Convert to int16 (from sometimes int16),

@@ -153,7 +153,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 		pos*=CUBE_SIZE
 		x, y, z = pos
 		cube = resampled[x:x+CUBE_SIZE, y:y+CUBE_SIZE, z:z+CUBE_SIZE]
-		assert cube.shape = (CUBE_SIZE,CUBE_SIZE,CUBE_SIZE)
+		assert cube.shape == (CUBE_SIZE,CUBE_SIZE,CUBE_SIZE)
 
 
 

@@ -128,8 +128,8 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 	spacing = np.array(itk_img.GetSpacing())  # spacing of voxels in world coor. (mm)
 
 	# resample
-	resampled = resample(img_array, spacing, new_spacing=[3,3,3])
-	print 'resampled array: ', resampled.shape
+	resampled, shape = resample(img_array, spacing, new_spacing=[3,3,3])
+	print 'resampled array: ', resampled.shape, shape
 
 
 	# iterate a cube through the image

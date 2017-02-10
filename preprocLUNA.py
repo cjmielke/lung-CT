@@ -128,7 +128,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 	spacing = np.array(itk_img.GetSpacing())  # spacing of voxels in world coor. (mm)
 
 	# resample
-	resampled, spacing = resample(img_array, spacing, new_spacing=[3,3,3])
+	resampled, spacing = resample(img_array, spacing, new_spacing=[1,1,1])
 	print 'resampled array: ', resampled.shape, spacing
 
 

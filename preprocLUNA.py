@@ -164,6 +164,8 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 
 
 
+	crash
+
 	# go through all nodes (why just the biggest?)
 	for node_idx, cur_row in mini_df.iterrows():
 		node_x = cur_row["coordX"]

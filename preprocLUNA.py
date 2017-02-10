@@ -133,7 +133,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 
 
 	# iterate a cube through the image
-	CUBE_SIZE = 32
+	CUBE_SIZE = 16
 	'''
 	C = CUBE_SIZE
 	i=j=k=0
@@ -146,7 +146,10 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 		i+=C
 	'''
 
-	nChunks = np.asarray(resampled.shape)/CUBE_SIZE
+	dim = np.asarray(resampled.shape)
+	print 'dimension of image: ', dim
+
+	nChunks = dim/CUBE_SIZE
 	print 'Number of chunks in each direction: ', nChunks
 
 

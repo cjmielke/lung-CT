@@ -128,8 +128,8 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 	spacing = np.array(itk_img.GetSpacing())  # spacing of voxels in world coor. (mm)
 
 	# resample
-	resampled, shape = resample(img_array, spacing, new_spacing=[3,3,3])
-	print 'resampled array: ', resampled.shape, shape
+	resampled, spacing = resample(img_array, spacing, new_spacing=[3,3,3])
+	print 'resampled array: ', resampled.shape, spacing
 
 
 	# iterate a cube through the image
@@ -146,7 +146,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 		i+=C
 	'''
 
-	nChunks = resampled.shape/CUBE_SIZE
+	nChunks = np.asarray(resampled.shape)/CUBE_SIZE
 	print 'Number of chunks in each direction: ', nChunks
 
 

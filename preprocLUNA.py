@@ -136,7 +136,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 
 
 	# iterate a cube through the image
-	CUBE_SIZE = 16
+	CUBE_SIZE = 32
 	'''
 	C = CUBE_SIZE
 	i=j=k=0

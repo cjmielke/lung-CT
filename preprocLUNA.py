@@ -154,8 +154,9 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 
 
 	for pos in itertools.product(*map(xrange, nChunks)):
-		pos*=CUBE_SIZE
+		pos = np.asarray(pos)
 		print pos
+		pos*=CUBE_SIZE
 		x, y, z = pos
 		cube = resampled[x:x+CUBE_SIZE, y:y+CUBE_SIZE, z:z+CUBE_SIZE]
 		assert cube.shape == (CUBE_SIZE,CUBE_SIZE,CUBE_SIZE)

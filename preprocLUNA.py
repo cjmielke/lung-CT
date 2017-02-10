@@ -124,6 +124,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 	itk_img = sitk.ReadImage(img_file)
 	img_array = sitk.GetArrayFromImage(itk_img)  # indexes are z,y,x (notice the ordering)
 	num_z, height, width = img_array.shape  # heightXwidth constitute the transverse plane
+	print 'image shape: ', img_array.shape
 	origin = np.array(itk_img.GetOrigin())  # x,y,z  Origin in world coordinates (mm)
 	spacing = np.array(itk_img.GetSpacing())  # spacing of voxels in world coor. (mm)
 

@@ -131,8 +131,9 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 	print 'image spacing: ', spacing
 
 	# resample
-	resampled, spacing = resample(img_array, spacing, new_spacing=[1,1,1])
-	print 'resampled array: ', resampled.shape, spacing
+	#resampled, spacing = resample(img_array, spacing, new_spacing=[1,1,1])
+	#print 'resampled array: ', resampled.shape, spacing
+	resampled = img_array
 
 
 	# iterate a cube through the image

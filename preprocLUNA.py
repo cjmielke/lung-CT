@@ -128,7 +128,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 	origin = np.array(itk_img.GetOrigin())  # x,y,z  Origin in world coordinates (mm)
 	spacing = np.array(itk_img.GetSpacing())  # spacing of voxels in world coor. (mm)
 	print 'image spacing: ', spacing
-	spacing = np.asarray(spacing[2], spacing[0], spacing[1])
+	spacing = np.asarray((spacing[2], spacing[0], spacing[1]))
 	print 'image spacing: ', spacing
 
 	# resample

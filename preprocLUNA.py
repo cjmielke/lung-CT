@@ -11,6 +11,7 @@ output_path = "/home/cosmo/data/luna-out/"
 
 import SimpleITK as sitk
 import numpy as np
+import scipy
 from glob import glob
 import os
 import pandas as pd

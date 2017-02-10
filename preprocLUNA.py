@@ -11,7 +11,7 @@ output_path = "/home/cosmo/data/luna-out/"
 
 import SimpleITK as sitk
 import numpy as np
-import scipy
+from scipy import ndimage
 from glob import glob
 import os
 import pandas as pd
@@ -109,7 +109,7 @@ def resample(image, spacing, new_spacing=[3,3,3]):
 	real_resize_factor = new_shape / image.shape
 	new_spacing = spacing / real_resize_factor
 
-	image = scipy.ndimage.interpolation.zoom(image, real_resize_factor, mode='nearest')
+	image = ndimage.interpolation.zoom(image, real_resize_factor, mode='nearest')
 
 	return image, new_spacing
 

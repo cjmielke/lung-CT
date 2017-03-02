@@ -2,6 +2,8 @@
 # Settings
 import itertools
 
+import pandas
+
 luna_path = "/home/cosmo/data/luna/"
 luna_subset_path = luna_path+"subset0/"
 
@@ -26,7 +28,7 @@ from tqdm import tqdm
 
 
 
-file_list=glob(luna_subset_path+"*.mhd")
+file_list = glob(luna_subset_path+"*.mhd")
 
 
 
@@ -116,17 +118,20 @@ def resample(image, spacing, new_spacing=[3,3,3]):
 
 
 
+
+imageDF = pandas.DataFrame()
+
 for fcount, img_file in enumerate(tqdm(file_list)):
 
-	mini_df = df_node[df_node["file"]==img_file] #get all nodules associate with file
+	mini_df = df_node[df_node["file"]==img_file]			#get all nodules associate with file
 
 	# load the data once
 	itk_img = sitk.ReadImage(img_file)
-	img_array = sitk.GetArrayFromImage(itk_img)  # indexes are z,y,x (notice the ordering)
-	num_z, height, width = img_array.shape  # heightXwidth constitute the transverse plane
+	img_array = sitk.GetArrayFromImage(itk_img)			# indexes are z,y,x (notice the ordering)
+	num_z, height, width = img_array.shape				# heightXwidth constitute the transverse plane
 	print 'image shape: ', img_array.shape
-	origin = np.array(itk_img.GetOrigin())  # x,y,z  Origin in world coordinates (mm)
-	spacing = np.array(itk_img.GetSpacing())  # spacing of voxels in world coor. (mm)
+	origin = np.array(itk_img.GetOrigin())				# x,y,z  Origin in world coordinates (mm)
+	spacing = np.array(itk_img.GetSpacing())			# spacing of voxels in world coor. (mm)
 	print 'image spacing: ', spacing
 	spacing = np.asarray((spacing[2], spacing[0], spacing[1]))
 	print 'image spacing: ', spacing
@@ -136,6 +141,14 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 	print 'resampled array: ', resampled.shape, spacing
 	#resampled = img_array
 
+
+	# TODO, store resampled array into pytables
+	# TODO, also store slices in pytables that are just resampled along 2D plane ... IE, for 2D ML without depth interpolation
+
+
+
+
+	# FIXME - all this stuff should be downstream, coming out of pytables ...
 
 	# iterate a cube through the image
 	CUBE_SIZE = 32
@@ -167,6 +180,9 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 		cube = resampled[x:x+CUBE_SIZE, y:y+CUBE_SIZE, z:z+CUBE_SIZE]
 		assert cube.shape == (CUBE_SIZE,CUBE_SIZE,CUBE_SIZE)
 
+		# TODO - create lookup method that determines if nodule is present
+		# nodulePresent = findNodules(x,y,z,CUBE_SIZE) 
+
 
 
 	crash
@@ -186,8 +202,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 		for i, i_z in enumerate(np.arange(int(v_center[2]) - 1,
 										  int(v_center[2]) + 2).clip(0,
 																	 num_z - 1)):  # clip prevents going out of bounds in Z
-			mask = make_mask(center, diam, i_z * spacing[2] + origin[2],
-							 width, height, spacing, origin)
+			mask = make_mask(center, diam, i_z * spacing[2] + origin[2], width, height, spacing, origin)
 			masks[i] = mask
 			imgs[i] = img_array[i_z]
 		np.save(os.path.join(output_path, "images_%04d_%04d.npy" % (fcount, node_idx)), imgs)
@@ -228,3 +243,8 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 				imgs[i] = img_array[i_z]
 			np.save(os.path.join(output_path,"images_%04d_%04d.npy" % (fcount, node_idx)),imgs)
 			np.save(os.path.join(output_path,"masks_%04d_%04d.npy" % (fcount, node_idx)),masks)
+
+
+
+
+

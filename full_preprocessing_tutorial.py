@@ -67,7 +67,7 @@ def get_pixels_hu(slices):
 
 
 #first_patient = load_scan(INPUT_FOLDER + patients[0])
-first_patient = load_scan(INPUT_FOLDER + '0c37613214faddf8701ca41e6d43f56e')
+first_patient = load_scan(INPUT_FOLDER + '00cba091fa4ad62cc3200a657aeb957e')
 
 
 

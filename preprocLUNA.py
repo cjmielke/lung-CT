@@ -4,10 +4,10 @@ import itertools
 
 import pandas
 
-luna_path = "/home/cosmo/data/luna/"
+luna_path = "/data/datasets/luna/"
 luna_subset_path = luna_path+"subset0/"
 
-output_path = "/home/cosmo/data/luna-out/"
+output_path = "/data/datasets/luna/preproc/"
 
 
 
@@ -94,11 +94,16 @@ def get_filename(file_list, case):
 	for f in file_list:
 		if case in f:
 			return(f)
-#
-# The locations of the nodes
-df_node = pd.read_csv(luna_path+"annotations.csv")
-df_node["file"] = df_node["seriesuid"].map(lambda file_name: get_filename(file_list, file_name))
-df_node = df_node.dropna()
+
+
+
+
+
+
+# The locations of the nodules
+noduleDF = pd.read_csv(luna_path + "annotations.csv")
+noduleDF["file"] = noduleDF["seriesuid"].map(lambda file_name: get_filename(file_list, file_name))
+noduleDF = noduleDF.dropna()
 
 
 #crash
@@ -124,7 +129,7 @@ imageDF = pandas.DataFrame(columns=['seriesuid'])
 
 for fcount, img_file in enumerate(tqdm(file_list)):
 
-	mini_df = df_node[df_node["file"]==img_file]			#get all nodules associate with file
+	mini_df = noduleDF[noduleDF["file"] == img_file]			#get all nodules associate with file
 
 	# load the data once
 	itk_img = sitk.ReadImage(img_file)
@@ -151,6 +156,13 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 
 
 	# FIXME - all this stuff should be downstream, coming out of pytables ...
+	continue
+
+
+
+
+
+def foo():
 
 	# iterate a cube through the image
 	CUBE_SIZE = 32
@@ -210,13 +222,28 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 		np.save(os.path.join(output_path, "images_%04d_%04d.npy" % (fcount, node_idx)), imgs)
 		np.save(os.path.join(output_path, "masks_%04d_%04d.npy" % (fcount, node_idx)), masks)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #####
 #
 # Looping over the image files
 #
 for fcount, img_file in enumerate(tqdm(file_list)):
 
-	mini_df = df_node[df_node["file"]==img_file] #get all nodules associate with file
+	mini_df = noduleDF[noduleDF["file"] == img_file] #get all nodules associate with file
 
 	if mini_df.shape[0]>0: # some files may not have a nodule--skipping those 
 

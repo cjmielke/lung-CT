@@ -119,7 +119,8 @@ def resample(image, spacing, new_spacing=[3,3,3]):
 
 
 
-imageDF = pandas.DataFrame()
+imageDF = pandas.DataFrame(columns=['seriesuid'])
+
 
 for fcount, img_file in enumerate(tqdm(file_list)):
 
@@ -146,6 +147,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 	# TODO, also store slices in pytables that are just resampled along 2D plane ... IE, for 2D ML without depth interpolation
 
 
+	# store mapping between pytables index and seriesuid
 
 
 	# FIXME - all this stuff should be downstream, coming out of pytables ...

@@ -4,11 +4,15 @@ import itertools
 
 import pandas
 
+from utils import make_mask
+
 LUNA_DATA_PATH = "/data/datasets/luna/"
 luna_subset_path = LUNA_DATA_PATH + "subset0/"
 
 output_path = "/data/datasets/luna/preproc/"
 
+
+RESAMPLED_IMG_SHAPE = (750, 750, 750)
 
 
 import SimpleITK as sitk
@@ -21,69 +25,16 @@ import pandas as pd
 from tqdm import tqdm
 
 
-
-
-
-
-
-
-
 #file_list = glob(luna_subset_path+"*.mhd")
 file_list = glob(LUNA_DATA_PATH + "subset?/*.mhd")
 
 
+import tables
+tables.set_blosc_max_threads(4)
+filters = tables.Filters(complevel=1, complib='blosc:lz4')      # 7.7sec / 1.2 GB   (14 sec 1015MB if precision is reduced)           140s 3.7GB
 
-#Some helper functions
-
-def make_mask(center,diam,z,width,height,spacing,origin):
-	'''
-Center : centers of circles px -- list of coordinates x,y,z
-diam : diameters of circles px -- diameter
-widthXheight : pixel dim of image
-spacing = mm/px conversion rate np array x,y,z
-origin = x,y,z mm np.array
-z = z position of slice in world coordinates mm
-	'''
-	mask = np.zeros([height,width]) # 0's everywhere except nodule swapping x,y to match img
-	#convert to nodule space from world coordinates
-
-	# Defining the voxel range in which the nodule falls
-	v_center = (center-origin)/spacing
-	v_diam = int(diam/spacing[0]+5)
-	v_xmin = np.max([0,int(v_center[0]-v_diam)-5])
-	v_xmax = np.min([width-1,int(v_center[0]+v_diam)+5])
-	v_ymin = np.max([0,int(v_center[1]-v_diam)-5]) 
-	v_ymax = np.min([height-1,int(v_center[1]+v_diam)+5])
-
-	v_xrange = range(v_xmin,v_xmax+1)
-	v_yrange = range(v_ymin,v_ymax+1)
-
-	# Convert back to world coordinates for distance calculation
-	x_data = [x*spacing[0]+origin[0] for x in range(width)]
-	y_data = [x*spacing[1]+origin[1] for x in range(height)]
-
-	# Fill in 1 within sphere around nodule
-	for v_x in v_xrange:
-		for v_y in v_yrange:
-			p_x = spacing[0]*v_x + origin[0]
-			p_y = spacing[1]*v_y + origin[1]
-			if np.linalg.norm(center-np.array([p_x,p_y,z]))<=diam:
-				mask[int((p_y-origin[1])/spacing[1]),int((p_x-origin[0])/spacing[0])] = 1.0
-	return(mask)
-
-
-
-
-
-def matrix2int16(matrix):
-	''' 
-matrix must be a numpy array NXN
-Returns uint16 version
-	'''
-	m_min= np.min(matrix)
-	m_max= np.max(matrix)
-	matrix = matrix-m_min
-	return(np.array(np.rint( (matrix-m_min)/float(m_max-m_min) * 65535.0),dtype=np.uint16))
+DB = tables.open_file('/data/datasets/luna/resampled.h5', mode='w', filters=None)
+images = DB.create_earray(DB.root, 'resampled', atom=tables.Int16Atom(shape=RESAMPLED_IMG_SHAPE), shape=(0,), expectedrows=len(file_list), filters=filters)
 
 
 # Helper function to get rows in data frame associated  with each file
@@ -153,14 +104,29 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 	# store mapping between pytables index and seriesuid
 
 	mini_df['pytablesIndex'] = fcount
-
+	mini_df['resampledX'] = spacing[0]
+	mini_df['resampledY'] = spacing[1]
+	mini_df['resampledZ'] = spacing[2]
 
 	imageDF = imageDF.append(mini_df)
+	imageDF.to_csv('/data/datasets/luna/resampledNodules.tsv', sep='\t')
+	resized = np.zeros(RESAMPLED_IMG_SHAPE, dtype='int16')
 
+	xCopy = min(RESAMPLED_IMG_SHAPE[0], resampled.shape[0])
+	yCopy = min(RESAMPLED_IMG_SHAPE[1], resampled.shape[1])
+	zCopy = min(RESAMPLED_IMG_SHAPE[2], resampled.shape[2])
+	resized[:xCopy, :yCopy, :zCopy] = resampled[:xCopy, :yCopy, :zCopy]
+
+	images.append([resized])  # get the remaining ones
 
 
 	# FIXME - all this stuff should be downstream, coming out of pytables ...
-	continue
+
+
+
+
+
+
 
 
 
@@ -270,7 +236,7 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 			v_center = np.rint((center-origin)/spacing)  # nodule center in voxel space (still x,y,z ordering)
 			for i, i_z in enumerate(np.arange(int(v_center[2])-1,
 							 int(v_center[2])+2).clip(0, num_z-1)): # clip prevents going out of bounds in Z
-				mask = make_mask(center, diam, i_z*spacing[2]+origin[2],
+				mask = make_mask(center, diam, i_z * spacing[2] + origin[2],
 								 width, height, spacing, origin)
 				masks[i] = mask
 				imgs[i] = img_array[i_z]

@@ -13,7 +13,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 # Some constants
 #INPUT_FOLDER = '../input/sample_images/'
 
-INPUT_FOLDER = '/home/user/data/lung/sample_images/'
+INPUT_FOLDER = '/data/datasets/lung/sample_images/'
 
 
 patients = os.listdir(INPUT_FOLDER)
@@ -106,6 +106,7 @@ plt.show()
 def resample(image, scan, new_spacing=[3,3,3]):
 	# Determine current pixel spacing
 	spacing = np.array([scan[0].SliceThickness] + scan[0].PixelSpacing, dtype=np.float32)
+	print 'pixel spacing is ', spacing
 
 	resize_factor = spacing / new_spacing
 	new_real_shape = image.shape * resize_factor

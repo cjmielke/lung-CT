@@ -4,8 +4,8 @@ import itertools
 
 import pandas
 
-luna_path = "/data/datasets/luna/"
-luna_subset_path = luna_path+"subset0/"
+LUNA_DATA_PATH = "/data/datasets/luna/"
+luna_subset_path = LUNA_DATA_PATH + "subset0/"
 
 output_path = "/data/datasets/luna/preproc/"
 
@@ -28,7 +28,8 @@ from tqdm import tqdm
 
 
 
-file_list = glob(luna_subset_path+"*.mhd")
+#file_list = glob(luna_subset_path+"*.mhd")
+file_list = glob(LUNA_DATA_PATH + "subset?/*.mhd")
 
 
 
@@ -85,65 +86,62 @@ Returns uint16 version
 	return(np.array(np.rint( (matrix-m_min)/float(m_max-m_min) * 65535.0),dtype=np.uint16))
 
 
-
-#####################
-#
-# Helper function to get rows in data frame associated 
-# with each file
+# Helper function to get rows in data frame associated  with each file
 def get_filename(file_list, case):
 	for f in file_list:
 		if case in f:
 			return(f)
 
-
-
-
-
-
 # The locations of the nodules
-noduleDF = pd.read_csv(luna_path + "annotations.csv")
+noduleDF = pd.read_csv(LUNA_DATA_PATH + "annotations.csv")
 noduleDF["file"] = noduleDF["seriesuid"].map(lambda file_name: get_filename(file_list, file_name))
-noduleDF = noduleDF.dropna()
+#noduleDF = noduleDF.dropna()
+
+
+candidatesDF = pd.read_csv(LUNA_DATA_PATH + "candidates.csv")
+candidatesDF["file"] = candidatesDF["seriesuid"].map(lambda file_name: get_filename(file_list, file_name))
+#candidatesDF = candidatesDF.dropna()
+
 
 
 #crash
 
 
-def resample(image, spacing, new_spacing=[3,3,3]):
+def resample(image, spacing, new_spacing=[3,3,3], order=1):
 	resize_factor = spacing / new_spacing
 	new_real_shape = image.shape * resize_factor
 	new_shape = np.round(new_real_shape)
 	real_resize_factor = new_shape / image.shape
 	new_spacing = spacing / real_resize_factor
 
-	image = ndimage.interpolation.zoom(image, real_resize_factor, mode='nearest')
+	image = ndimage.interpolation.zoom(image, real_resize_factor, mode='nearest', order=order)
 
 	return image, new_spacing
 
 
 
 
-
-imageDF = pandas.DataFrame(columns=['seriesuid'])
+# this dataframe just stores seriesUIDs .... index is auto-incrementing and follows pytables index
+#imageDF = pandas.DataFrame(columns=['seriesuid'])
+imageDF = pandas.DataFrame(columns=noduleDF.columns)
 
 
 for fcount, img_file in enumerate(tqdm(file_list)):
 
 	mini_df = noduleDF[noduleDF["file"] == img_file]			#get all nodules associate with file
 
-	# load the data once
 	itk_img = sitk.ReadImage(img_file)
 	img_array = sitk.GetArrayFromImage(itk_img)			# indexes are z,y,x (notice the ordering)
 	num_z, height, width = img_array.shape				# heightXwidth constitute the transverse plane
 	print 'image shape: ', img_array.shape
 	origin = np.array(itk_img.GetOrigin())				# x,y,z  Origin in world coordinates (mm)
 	spacing = np.array(itk_img.GetSpacing())			# spacing of voxels in world coor. (mm)
-	print 'image spacing: ', spacing
+	#print 'image spacing: ', spacing
 	spacing = np.asarray((spacing[2], spacing[0], spacing[1]))
 	print 'image spacing: ', spacing
 
 	# resample
-	resampled, spacing = resample(img_array, spacing, new_spacing=[1,1,1])
+	resampled, spacing = resample(img_array, spacing, new_spacing=[0.6, 0.6, 0.6])
 	print 'resampled array: ', resampled.shape, spacing
 	#resampled = img_array
 
@@ -153,6 +151,12 @@ for fcount, img_file in enumerate(tqdm(file_list)):
 
 
 	# store mapping between pytables index and seriesuid
+
+	mini_df['pytablesIndex'] = fcount
+
+
+	imageDF = imageDF.append(mini_df)
+
 
 
 	# FIXME - all this stuff should be downstream, coming out of pytables ...

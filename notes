@@ -1,0 +1,51 @@
+
+* query dataframe to see if this box has nodule in it
+
+
+
+* for this nodule, find bounding box
+
+
+
+
+
+strategy :
+
+loop over images, resample them to reasonable isomorphic dimensions ...
+pad resampled image to a consistent dimension, throw into pytables
+    hopefully compression will take care of sparse zero regions
+
+generator looping over pytables array:
+
+for each image:
+    for each cube:
+        is nodule contained in cube?
+        (this works, but would need loss weights)
+
+
+^ could iterate over top to produce two downstream datasets that could be subsampled
+    list of nodules
+    list of controls
+
+
+Alternatively, could get around the padding problem and just store smaller cubes
+    might need to resample on each run :(
+    would need to select cube size ahead of time :(
+    we've got the space, so perhaps storing padded full images is best
+
+
+
+# stats on nodule sizes
+In [71]: len(noduleDF)
+Out[71]: 1186
+
+In [72]: noduleDF.diameter_mm.mean()
+Out[72]: 8.3065273155539643
+
+In [73]: noduleDF.diameter_mm.std()
+Out[73]: 4.7620328071793647
+
+
+
+
+

@@ -1,3 +1,8 @@
+resampledNodulesDF.join(imageDF, on='imgNum')
+
+
+
+
 
 * query dataframe to see if this box has nodule in it
 

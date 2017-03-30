@@ -2,16 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ba5e01f0-f744-4870-9fda-67e7ea77479c" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/extractCubes.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/preproc_dsb.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/viz.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/code.iml" afterPath="$PROJECT_DIR$/.idea/code.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dsbTests.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dsb_spacing.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/viewExtractedNodules.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/classifierMultitarget.py" afterPath="$PROJECT_DIR$/classifierMultitarget.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extractCubes.py" afterPath="$PROJECT_DIR$/extractCubes.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/full_preprocessing_tutorial.py" afterPath="$PROJECT_DIR$/full_preprocessing_tutorial.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notes" afterPath="$PROJECT_DIR$/notes" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/preprocLUNA.py" afterPath="$PROJECT_DIR$/preprocLUNA.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/preproc_dsb.py" afterPath="$PROJECT_DIR$/preproc_dsb.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/utils.py" afterPath="$PROJECT_DIR$/utils.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/viewCandidates.py" afterPath="$PROJECT_DIR$/viewCandidates.py" />
     </list>
     <ignored path=".idea/dataSources.local.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,24 +31,11 @@
       <content type="file-editors">
         <state>
           <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="classifierMultitarget.py" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="525">
-                    <caret line="377" column="5" selection-start-line="377" selection-start-column="5" selection-end-line="377" selection-end-column="5" />
-                    <folding>
-                      <element signature="e#46#59#0" expanded="true" />
-                      <element signature="e#1548#4706#0" expanded="false" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
             <file leaf-file-name="training.py" pinned="false" current-in-tab="false">
               <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/engine/training.py">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="625">
-                    <caret line="1736" column="33" selection-start-line="1736" selection-start-column="33" selection-end-line="1736" selection-end-column="33" />
+                  <state relative-caret-position="385">
+                    <caret line="1693" column="43" selection-start-line="1693" selection-start-column="43" selection-end-line="1693" selection-end-column="43" />
                     <folding />
                   </state>
                 </provider>
@@ -72,11 +61,11 @@
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
-              <entry file="file://$PROJECT_DIR$/utils.py">
+            <file leaf-file-name="firstExp.json" pinned="false" current-in-tab="true">
+              <entry file="file://$PROJECT_DIR$/fglab/firstExp.json">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="15">
-                    <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+                  <state relative-caret-position="360">
+                    <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
                     <folding />
                   </state>
                 </provider>
@@ -92,28 +81,18 @@
     <favorites_list name="code" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.4349167">
+    <splitter split-orientation="horizontal" split-proportion="0.45494747">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="preprocLUNA.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/preprocLUNA.py">
+          <file leaf-file-name="callbacks.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/callbacks.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="240">
-                  <caret line="196" column="0" selection-start-line="196" selection-start-column="0" selection-end-line="196" selection-end-column="0" />
+                <state relative-caret-position="684">
+                  <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
                   <folding>
-                    <element signature="e#12#26#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="full_preprocessing_tutorial.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/full_preprocessing_tutorial.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="718">
-                  <caret line="178" column="0" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#9#0" expanded="true" />
+                    <element signature="e#0#36#0" expanded="true" />
+                    <element signature="e#268#556#0" expanded="false" />
+                    <element signature="e#651#1183#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -122,24 +101,34 @@
           <file leaf-file-name="generators.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/generators.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="357">
-                  <caret line="179" column="17" selection-start-line="179" selection-start-column="17" selection-end-line="179" selection-end-column="17" />
+                <state relative-caret-position="119">
+                  <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
                   <folding>
                     <element signature="e#0#16#0" expanded="true" />
-                    <element signature="e#314#1306#0" expanded="false" />
+                    <element signature="e#1301#2720#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="viewCandidates.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/viewCandidates.py">
+          <file leaf-file-name="dsbTests.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/dsbTests.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="405">
-                  <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+                <state relative-caret-position="315">
+                  <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
                   <folding>
-                    <element signature="e#26#35#0" expanded="true" />
+                    <element signature="e#0#13#0" expanded="true" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/utils.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="373">
+                  <caret line="124" column="16" selection-start-line="124" selection-start-column="16" selection-end-line="124" selection-end-column="16" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -147,62 +136,15 @@
         </leaf>
       </split-first>
       <split-second>
-        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="generators.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/generators.py">
+        <leaf>
+          <file leaf-file-name="classifierMultitarget.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="1995">
-                  <caret line="134" column="74" selection-start-line="134" selection-start-column="74" selection-end-line="134" selection-end-column="74" />
+                <state relative-caret-position="568">
+                  <caret line="304" column="0" selection-start-line="304" selection-start-column="0" selection-end-line="304" selection-end-column="0" />
                   <folding>
-                    <element signature="e#0#16#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="oldGenerators.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/oldGenerators.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="0">
-                  <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-                  <folding />
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="viz.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/viz.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="885">
-                  <caret line="63" column="0" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#36#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="extractCubes.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/extractCubes.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="585">
-                  <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#129#141#0" expanded="true" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="preproc_dsb.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/preproc_dsb.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="-182">
-                  <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#9#0" expanded="true" />
-                    <element signature="e#514#1006#0" expanded="false" />
-                    <element signature="e#1037#1767#0" expanded="false" />
+                    <element signature="e#46#59#0" expanded="true" />
+                    <element signature="e#1556#4714#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -214,15 +156,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>imageDF</find>
-      <find>cube</find>
-      <find>image</find>
-      <find>CUBE_SIZE</find>
-      <find>thread</find>
-      <find>batch</find>
-      <find>dq</find>
-      <find>try</find>
-      <find>leaf</find>
       <find>images</find>
       <find>stratified</find>
       <find>numNod</find>
@@ -236,12 +169,23 @@
       <find>dqt</find>
       <find>signal</find>
       <find>sourceL</find>
-      <find>print</find>
       <find>dim</find>
       <find>raise Full</find>
       <find>candidates</find>
       <find>rowcan</find>
       <find>numImages</find>
+      <find>imgNum</find>
+      <find>db =</find>
+      <find>print</find>
+      <find>threa</find>
+      <find>tables</find>
+      <find>imageIn</find>
+      <find>DATASET</find>
+      <find>DATADIR</find>
+      <find>threads</find>
+      <find>index</find>
+      <find>df</find>
+      <find>row</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -252,14 +196,20 @@
       <list>
         <option value="$PROJECT_DIR$/viz.py" />
         <option value="$PROJECT_DIR$/full_preprocessing_tutorial.py" />
-        <option value="$PROJECT_DIR$/utils.py" />
-        <option value="$PROJECT_DIR$/classifierMultitarget.py" />
+        <option value="$PROJECT_DIR$/dsb_spacing.py" />
+        <option value="$PROJECT_DIR$/preproc_dsb.py" />
         <option value="$PROJECT_DIR$/preprocLUNA.py" />
-        <option value="$PROJECT_DIR$/generators.py" />
         <option value="$PROJECT_DIR$/extractCubes.py" />
         <option value="$PROJECT_DIR$/viewCandidates.py" />
+        <option value="$USER_HOME$/mri.py" />
+        <option value="$PROJECT_DIR$/viewExtractedNodules.py" />
         <option value="$PROJECT_DIR$/notes" />
-        <option value="$PROJECT_DIR$/preproc_dsb.py" />
+        <option value="$PROJECT_DIR$/utils.py" />
+        <option value="$PROJECT_DIR$/callbacks.py" />
+        <option value="$PROJECT_DIR$/dsbTests.py" />
+        <option value="$PROJECT_DIR$/generators.py" />
+        <option value="$PROJECT_DIR$/fglab/firstExp.json" />
+        <option value="$PROJECT_DIR$/classifierMultitarget.py" />
       </list>
     </option>
   </component>
@@ -271,7 +221,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="65" />
-    <option name="y" value="24" />
+    <option name="y" value="1104" />
     <option name="width" value="1855" />
     <option name="height" value="1056" />
   </component>
@@ -300,33 +250,16 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="code" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="code" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="code" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane />
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/mri.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
     <property name="nodejs_interpreter_path" value="/usr/bin/node" />
     <property name="js.eslint.eslintPackage" value="" />
@@ -562,6 +495,9 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="ba5e01f0-f744-4870-9fda-67e7ea77479c" name="Default" comment="" />
@@ -573,14 +509,13 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
+    <frame x="65" y="1104" width="1855" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10392482" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17910448" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32925585" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -592,6 +527,7 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32985386" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
@@ -612,70 +548,14 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="3" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4170">
-          <caret line="282" column="0" selection-start-line="282" selection-start-column="0" selection-end-line="282" selection-end-column="0" />
-          <folding>
-            <element signature="e#46#59#0" expanded="true" />
-            <element signature="e#1548#4706#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/scipy/ndimage/interpolation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7785">
-          <caret line="519" column="25" selection-start-line="519" selection-start-column="25" selection-end-line="519" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/preprocLUNA.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2430">
-          <caret line="162" column="0" selection-start-line="162" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
-          <folding>
-            <element signature="e#12#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3285">
-          <caret line="219" column="0" selection-start-line="219" selection-start-column="0" selection-end-line="219" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#46#59#0" expanded="true" />
-            <element signature="e#1548#4706#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/keras_cnn_brains.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#9#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/generators.py" />
+    <entry file="file://$PROJECT_DIR$/classifierMultitarget.py" />
+    <entry file="file://$PROJECT_DIR$/keras_cnn_brains.py" />
     <entry file="file:///usr/local/lib/python2.7/dist-packages/scipy/ndimage/interpolation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="7680">
@@ -687,91 +567,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1455">
           <caret line="109" column="58" selection-start-line="109" selection-start-column="58" selection-end-line="109" selection-end-column="58" />
-          <folding>
-            <element signature="e#12#26#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/generators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3045">
-          <caret line="207" column="0" selection-start-line="207" selection-start-column="0" selection-end-line="207" selection-end-column="0" />
-          <folding>
-            <element signature="e#46#59#0" expanded="true" />
-            <element signature="e#1548#4706#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/keras_cnn_brains.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#9#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/scipy/ndimage/interpolation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7680">
-          <caret line="519" column="25" selection-start-line="519" selection-start-column="25" selection-end-line="519" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/preprocLUNA.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1455">
-          <caret line="109" column="58" selection-start-line="109" selection-start-column="58" selection-end-line="109" selection-end-column="58" />
-          <folding>
-            <element signature="e#12#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/generators.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3780">
-          <caret line="256" column="24" selection-start-line="256" selection-start-column="24" selection-end-line="256" selection-end-column="24" />
-          <folding>
-            <element signature="e#46#59#0" expanded="true" />
-            <element signature="e#1548#4706#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/keras_cnn_brains.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#9#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/generators.py" />
+    <entry file="file://$PROJECT_DIR$/classifierMultitarget.py" />
+    <entry file="file://$PROJECT_DIR$/keras_cnn_brains.py" />
     <entry file="file:///usr/local/lib/python2.7/dist-packages/scipy/ndimage/interpolation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="7680">
@@ -783,9 +585,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#12#26#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -800,19 +600,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#12#26#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/foo">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/foo" />
     <entry file="file:///usr/local/lib/python2.7/dist-packages/scipy/ndimage/interpolation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
@@ -835,13 +627,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/callbacks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="222">
-          <caret line="291" column="41" selection-start-line="291" selection-start-column="41" selection-end-line="291" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/lib/python2.7/Queue.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1300">
@@ -853,7 +638,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="9000">
           <caret line="615" column="53" selection-start-line="615" selection-start-column="53" selection-end-line="615" selection-end-column="53" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -864,16 +648,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/keras_cnn_brains.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1770">
-          <caret line="125" column="0" selection-start-line="125" selection-start-column="0" selection-end-line="125" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#9#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/keras_cnn_brains.py" />
     <entry file="file://$USER_HOME$/.PyCharm2016.2/system/python_stubs/-1247972723/cv2/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="309">
@@ -888,28 +663,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/skimage/measure/_label.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/viz.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="885">
-          <caret line="63" column="0" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/viz.py" />
     <entry file="file:///usr/local/lib/python2.7/dist-packages/pandas/io/parsers.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="610">
           <caret line="568" column="0" selection-start-line="568" selection-start-column="0" selection-end-line="568" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -917,10 +675,39 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="304">
           <caret line="1299" column="4" selection-start-line="1299" selection-start-column="4" selection-end-line="1299" selection-end-column="4" />
-          <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/oldGenerators.py" />
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/tables/file.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="39">
+          <caret line="1147" column="8" selection-start-line="1147" selection-start-column="8" selection-end-line="1147" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/tqdm/_tqdm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="129">
+          <caret line="121" column="6" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/python2.7/random.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="309">
+          <caret line="276" column="8" selection-start-line="276" selection-start-column="8" selection-end-line="276" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/numpy/lib/npyio.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="309">
+          <caret line="434" column="4" selection-start-line="434" selection-start-column="4" selection-end-line="434" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/mri.py" />
     <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/backend/common.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1965">
@@ -937,63 +724,52 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/oldGenerators.py">
+    <entry file="file://$PROJECT_DIR$/dsb_spacing.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="90">
+          <caret line="18" column="47" selection-start-line="18" selection-start-column="47" selection-end-line="18" selection-end-column="47" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/engine/training.py">
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/skimage/measure/_label.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="1736" column="33" selection-start-line="1736" selection-start-column="33" selection-end-line="1736" selection-end-column="33" />
+        <state relative-caret-position="30">
+          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/tables/file.py">
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/skimage/feature/peak.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="39">
-          <caret line="1147" column="8" selection-start-line="1147" selection-start-column="8" selection-end-line="1147" selection-end-column="8" />
+        <state relative-caret-position="120">
+          <caret line="28" column="35" selection-start-line="28" selection-start-column="35" selection-end-line="28" selection-end-column="35" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
+    <entry file="file://$PROJECT_DIR$/viewExtractedNodules.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
+        <state relative-caret-position="105">
+          <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
+    <entry file="file://$PROJECT_DIR$/viewCandidates.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="377" column="5" selection-start-line="377" selection-start-column="5" selection-end-line="377" selection-end-column="5" />
+        <state relative-caret-position="675">
+          <caret line="45" column="24" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
           <folding>
-            <element signature="e#46#59#0" expanded="true" />
-            <element signature="e#1548#4706#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/preprocLUNA.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="196" column="0" selection-start-line="196" selection-start-column="0" selection-end-line="196" selection-end-column="0" />
-          <folding>
-            <element signature="e#12#26#0" expanded="true" />
+            <element signature="e#26#35#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/extractCubes.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="585">
-          <caret line="39" column="0" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+        <state relative-caret-position="133">
+          <caret line="21" column="45" selection-start-line="21" selection-start-column="45" selection-end-line="21" selection-end-column="45" />
           <folding>
             <element signature="e#129#141#0" expanded="true" />
           </folding>
@@ -1002,58 +778,102 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/notes">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+        <state relative-caret-position="-166">
+          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/tqdm/_tqdm.py">
+    <entry file="file://$PROJECT_DIR$/preprocLUNA.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="129">
-          <caret line="121" column="6" selection-start-line="121" selection-start-column="6" selection-end-line="121" selection-end-column="6" />
+        <state relative-caret-position="898">
+          <caret line="181" column="0" selection-start-line="180" selection-start-column="0" selection-end-line="181" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/full_preprocessing_tutorial.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="718">
-          <caret line="178" column="0" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+        <state relative-caret-position="705">
+          <caret line="47" column="0" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="373">
+          <caret line="124" column="16" selection-start-line="124" selection-start-column="16" selection-end-line="124" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/engine/training.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="385">
+          <caret line="1693" column="43" selection-start-line="1693" selection-start-column="43" selection-end-line="1693" selection-end-column="43" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/preproc_dsb.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="314">
+          <caret line="90" column="49" selection-start-line="90" selection-start-column="40" selection-end-line="90" selection-end-column="49" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dsbTests.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/generators.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1995">
-          <caret line="134" column="74" selection-start-line="134" selection-start-column="74" selection-end-line="134" selection-end-column="74" />
+        <state relative-caret-position="119">
+          <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
+            <element signature="e#1301#2720#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/viewCandidates.py">
+    <entry file="file://$PROJECT_DIR$/callbacks.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="27" column="0" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+        <state relative-caret-position="684">
+          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
           <folding>
-            <element signature="e#26#35#0" expanded="true" />
+            <element signature="e#0#36#0" expanded="true" />
+            <element signature="e#268#556#0" expanded="false" />
+            <element signature="e#651#1183#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/preproc_dsb.py">
+    <entry file="file://$PROJECT_DIR$/fglab/firstExp.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-182">
-          <caret line="73" column="0" selection-start-line="73" selection-start-column="0" selection-end-line="73" selection-end-column="0" />
+        <state relative-caret-position="360">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="568">
+          <caret line="304" column="0" selection-start-line="304" selection-start-column="0" selection-end-line="304" selection-end-column="0" />
           <folding>
-            <element signature="e#0#9#0" expanded="true" />
-            <element signature="e#514#1006#0" expanded="false" />
-            <element signature="e#1037#1767#0" expanded="false" />
+            <element signature="e#46#59#0" expanded="true" />
+            <element signature="e#1556#4714#0" expanded="false" />
           </folding>
         </state>
       </provider>

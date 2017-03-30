@@ -166,20 +166,18 @@ def buildClassifier(inputShape, delLayers=8, sharedNeurons=128, cancerNeurons=32
 
 
 
-def buildAutoencoder(inputShape, filters=64, filterScale=2, batchNorm=True, sharedNeurons=16):
+def buildAutoencoder(inputShape):
+
+	border = 'same'
 
 
 	x,y,z = inputShape
 	input_img = Input(shape=(x, y, z, 1))
-	x = input_img
 
-	if batchNorm:
-		x = BatchNormalization()(x)
+	x = BatchNormalization()(input_img)
 
-
-
-	fo = filters
-	fi = filters*filterScale
+	fo = 64
+	fi = 128
 
 
 	x = Convolution3D(fo, (3, 3, 3), activation='relu', padding='same')(x)
@@ -209,8 +207,7 @@ def buildAutoencoder(inputShape, filters=64, filterScale=2, batchNorm=True, shar
 	#x = Convolution3D(8, cs, cs, cs, activation='relu', border_mode=border)(x)
 	#x = Convolution3D(8, cs, cs, cs, activation='relu', border_mode=border)(x)
 
-	if batchNorm:
-		x = BatchNormalization()(x)
+	x = BatchNormalization()(x)
 
 	x = UpSampling3D()(x)
 	x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
@@ -222,12 +219,11 @@ def buildAutoencoder(inputShape, filters=64, filterScale=2, batchNorm=True, shar
 
 
 	flat = Flatten()(encoded)
-	shared = Dense(sharedNeurons)(flat)
-
-	nodule = Dense(1, activation='sigmoid', name='nodule')(shared)
+	d = Dense(16)(flat)
+	nodule = Dense(1, activation='sigmoid', name='nodule')(d)
 
 	db = Dense(16)(flat)
-	diam = Dense(1, activation='relu', name='diam')(db)
+	diam = Dense(1, activation='relu', name='diam')(d)
 
 
 
@@ -258,7 +254,10 @@ def buildAutoencoder(inputShape, filters=64, filterScale=2, batchNorm=True, shar
 	)
 
 
+
+
 	print autoencoder.summary()
+
 
 	return encoder, autoencoder
 
@@ -286,19 +285,15 @@ if __name__ == '__main__':
 
 	parser.add_argument('-sharedNeurons', dest='sharedNeurons', default=64, type=int)
 	parser.add_argument('-cancerNeurons', dest='cancerNeurons', default=16, type=int)
-
 	parser.add_argument('-batchSize', dest='batchSize', default=32, type=int)
 	parser.add_argument('-cubeSize', dest='cubeSize', default=32, type=int)
-
-	parser.add_argument('-filters', dest='filters', default=32, type=int)
-
 
 	args = parser.parse_args()
 	print args
 	cubeSize = args.cubeSize
 
 
-	if args._id: OUTDIR = '/home/cosmo/lung/jobs/%s/' % args._id
+	if args._id: OUTDIR = './jobs/%s/' % args._id
 	else:  OUTDIR = '/modelState/'
 	if not os.path.exists(OUTDIR): os.makedirs(OUTDIR)
 
@@ -326,8 +321,8 @@ if __name__ == '__main__':
 	vGen = imageCubeGen(imagesSSD, valImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
 
 
-	candidateGen = CubeGen(DATADIR + 'cubes.h5', DATADIR + 'cubes.tsv', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
-	noduleGen = CubeGen(DATADIR + 'nodules.h5', DATADIR + 'nodules.tsv', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
+	candidateGen = CubeGen(DATADIR + 'cubes.h5', DATADIR + 'cubes.tsv', trainImagesDF, valImagesDF, autoencoder=True)
+	noduleGen = CubeGen(DATADIR + 'nodules.h5', DATADIR + 'nodules.tsv', trainImagesDF, valImagesDF, autoencoder=True)
 
 
 	#inputShape = images[0].shape
@@ -335,7 +330,7 @@ if __name__ == '__main__':
 	#classifier = buildClassifier(inputShape, delLayers=args.delLayers, sharedNeurons=args.sharedNeurons, cancerNeurons=args.cancerNeurons, ageWeight=args.ageWeight)
 
 	inputShape = (cubeSize, cubeSize, cubeSize)
-	encoder, autoencoder = buildAutoencoder(inputShape, filters=args.filters)
+	encoder, autoencoder = buildAutoencoder(inputShape)
 
 
 	stratifiedQ = Batcher(tGen, vGen, trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
@@ -352,7 +347,7 @@ if __name__ == '__main__':
 	autoencoder.fit_generator(
 		stratifiedQ.trainGen,
 		verbose=2,
-		epochs=100,
+		epochs=10000,
 		#samples_per_epoch=args.batchSize,
 		steps_per_epoch=1,
 		callbacks=[tb, lh],

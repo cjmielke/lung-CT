@@ -17,6 +17,9 @@ VALIDATION_SIZE = 100
 VALIDATION_SPLIT = 0.2
 
 
+from scipy.ndimage.interpolation import rotate, affine_transform, geometric_transform
+from keras.preprocessing.image import ImageDataGenerator
+
 
 
 

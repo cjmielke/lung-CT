@@ -169,9 +169,10 @@ class testDSBdata(Callback):
 
 			testY.append(cancer)
 			y_score.append(prob)
+
 		print testY
-		testY = numpy.concatenate(testY)
-		y_score = numpy.concatenate(y_score)
+		testY = numpy.asarray(testY)
+		y_score = numpy.asarray(y_score)
 
 		print testY.shape, y_score.shape
 

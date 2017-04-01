@@ -144,7 +144,7 @@ class testDSBdata(Callback):
 	def _imgGen(self):
 		while True:
 			for index, row in self.DF.iterrows():
-				image = getImage(self.array, row)
+				image, imgNum = getImage(self.array, row)
 				yield row['cancer'], image
 
 

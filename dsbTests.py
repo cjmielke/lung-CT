@@ -99,6 +99,7 @@ def makeTheCall(image, model, cubeSize):
 		# might need to expand dimensions ...
 
 		print batch[0].shape
+		batch = numpy.asarray(batch)
 		pred = model.predict(batch)
 		#preds = model.pr
 		isNodule, diam, decodedImg = pred[0]

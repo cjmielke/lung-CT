@@ -45,7 +45,7 @@ def batchGen(generator, n=1):
 
 
 # generator for image cubes, which might make batching easier to implement
-def generateImageCubeBatches(image, positions, cubeSize, batchSize=8):
+def generateImageCubeBatches(image, positions, cubeSize, batchSize=32):
 
 	l = len(positions)
 	for i in range(0, l, batchSize):
@@ -98,7 +98,7 @@ def makeTheCall(image, model, cubeSize):
 		# batch is now a list of cubes .... I think this is all we need for prediciton since its the only input
 		# might need to expand dimensions ...
 
-		print batch[0].shape
+		#print batch[0].shape
 		batch = numpy.asarray(batch)
 		pred = model.predict(batch)
 		#print pred

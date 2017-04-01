@@ -98,9 +98,16 @@ def makeTheCall(image, model, cubeSize):
 		isNodule, diam, decodedImg = pred[0]
 
 		# these should be lists
+		noduleScores.append(isNodule)
 
 
-	pass
+
+	noduleScores = numpy.asarray(noduleScores)
+	print 'Nodule scores : ', len(noduleScores), noduleScores.min(), noduleScores.mean(), noduleScores.max()
+
+
+	yield noduleScores.max()
+
 
 
 

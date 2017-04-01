@@ -349,6 +349,9 @@ if __name__ == '__main__':
 	#stratifiedQ = Batcher(candidateGen.trainGen, candidateGen.valGen, trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
 
 
+	from dsbTests import testDSBdata
+	tester = testDSBdata(period=10, numImages=2)
+
 	#cAUC = ComputeAUC(batch=dq.valBatch, prefix='v_', period=50)
 	#cAUCt = ComputeAUC(batch=dq.trainBatch, prefix='t_', period=50)
 	tb = TensorBoard(log_dir=OUTDIR + 'nodules/', write_graph=False, histogram_freq=1)
@@ -362,7 +365,7 @@ if __name__ == '__main__':
 		epochs=400,
 		#samples_per_epoch=args.batchSize,
 		steps_per_epoch=1,
-		callbacks=[tb, lh],
+		callbacks=[tb, lh, tester],
 		#class_weight=classWeight,
 		validation_data=stratifiedQ.valGen,
 		validation_steps=1,

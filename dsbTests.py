@@ -103,7 +103,7 @@ def makeTheCall(image, model, cubeSize):
 		pred = model.predict(batch)
 		print pred
 		#preds = model.pr
-		isNodule, diam, decodedImg = pred[0]
+		isNodule, diam, decodedImg = pred
 
 		# these should be lists
 		noduleScores.append(isNodule)

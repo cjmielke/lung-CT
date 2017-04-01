@@ -21,6 +21,9 @@ VALIDATION_SIZE = 100
 VALIDATION_SPLIT = 0.2
 
 
+from scipy.ndimage.interpolation import rotate, affine_transform, geometric_transform
+from keras.preprocessing.image import ImageDataGenerator
+
 
 
 
@@ -65,8 +68,8 @@ def augmentCube(cube):
 
 
 
-def scaleCube(cube, cubeSize):
-	#return cube
+def scaleCube(cube):
+	cubeSize = cube.shape[0]
 	#cube = normalizeStd(cube)
 	cube = normalizeRange(cube,MAX_BOUND=500.0)
 	#cube = normalizeRange(cube,MAX_BOUND=1000.0)
@@ -213,7 +216,7 @@ class CubeGen:
 		#print 'noduleNum', noduleNum
 		assert noduleNum < len(self.array)
 		cube = self.array[noduleNum]
-		cube = scaleCube(cube, self.cubeSize)
+		cube = scaleCube(cube)
 		#normImg = normalizeStd(image.clip(min=-1000, max=700))
 
 		if self.allNodules: nodule=1.0
@@ -291,7 +294,7 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 					#print 'empty cube'
 					continue
 
-				cube = scaleCube(cube, cubeSize)
+				cube = scaleCube(cube)
 
 				#cube = normImg[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
 				#print cube.min(), cube.mean(), cube.max()

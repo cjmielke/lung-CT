@@ -231,7 +231,7 @@ def buildAutoencoder(inputShape, filters=64, filterScale=2, batchNorm=True, shar
 
 
 
-	autoencoder = Model(inputs=[input_img], outputs=[decoded, nodule, diam], name='multiOut')
+	autoencoder = Model(inputs=[input_img], outputs=[nodule, diam, decoded], name='multiOut')
 
 	print 'hidden layer shape: ', encoder.output_shape
 

@@ -76,10 +76,11 @@ class fgLogger(Callback):
 				o['_scores']['AUC_t'] = round(np.asarray(self.log['t_AUC']).mean(), 2)
 			if 'v_AUC' in self.log:
 				o['_scores']['AUC_v'] = round(np.asarray(self.log['v_AUC']).mean(), 2)
-			if 'predictions_fmeasure' in self.log:
-				o['_scores']['F_t'] = round(np.asarray(self.log['predictions_fmeasure'])[-lastN:].mean(), 2)
-			if 'val_predictions_fmeasure' in self.log:
-				o['_scores']['F_v'] = round(np.asarray(self.log['val_predictions_fmeasure'])[-lastN:].mean(), 2)
+
+			if 'nodule_acc' in self.log:
+				o['_scores']['nodule_acc'] = round(np.asarray(self.log['nodule_acc'])[-lastN:].mean(), 2)
+			if 'val_nodule_acc' in self.log:
+				o['_scores']['val_nodule_acc'] = round(np.asarray(self.log['val_nodule_acc'])[-lastN:].mean(), 2)
 
 			#print o
 			j = json.dumps(o)

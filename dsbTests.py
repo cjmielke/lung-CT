@@ -51,6 +51,7 @@ def generateImageCubeBatches(image, positions, cubeSize, batchSize=8):
 	for i in range(0, l, batchSize):
 		batchPositions = positions[i: min(i+batchSize, l)]
 
+		batch = []
 		for pos in batchPositions:
 			pos = numpy.asarray(pos)
 			pos *= cubeSize
@@ -64,7 +65,9 @@ def generateImageCubeBatches(image, positions, cubeSize, batchSize=8):
 			# apply same normalization as in training
 			cube = scaleCube(cube)
 
-			yield cube
+			batch.append(cube)
+
+		yield batch
 
 
 

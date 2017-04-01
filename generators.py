@@ -48,7 +48,8 @@ def getNoduleDiameter(row):
 
 
 
-def scaleCube(cube, cubeSize):
+def scaleCube(cube):
+	cubeSize = cube.shape[0]
 	#cube = normalizeStd(cube)
 	cube = normalizeRange(cube,MAX_BOUND=500.0)
 	size = cube.shape[0]
@@ -185,7 +186,7 @@ class CubeGen:
 		noduleNum = int(row['noduleNum'])
 		#print noduleNum
 		cube = self.array[noduleNum]
-		cube = scaleCube(cube, self.cubeSize)
+		cube = scaleCube(cube)
 		#normImg = normalizeStd(image.clip(min=-1000, max=700))
 
 		if self.allNodules: nodule=1.0
@@ -253,7 +254,7 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 					#print 'empty cube'
 					continue
 
-				cube = scaleCube(cube, cubeSize)
+				cube = scaleCube(cube)
 
 				#cube = normImg[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
 				#print cube.min(), cube.mean(), cube.max()

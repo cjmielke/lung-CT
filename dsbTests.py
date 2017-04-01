@@ -131,7 +131,11 @@ class testDSBdata(Callback):
 		self.period = period
 		self.numImages = numImages
 
-		self.DF = pandas.read_csv(DATADIR+'resampledImages.tsv', sep='\t')
+		DF = pandas.read_csv(DATADIR+'resampledImages.tsv', sep='\t')
+		self.DF = DF[DF.cancer != -1]		# remove images from the submission set
+		print 'Images in DSB dataset: ', len(DF), len(self.DF)
+
+
 		self.DB = tables.open_file(DATADIR+'resampled.h5', mode='r')
 		self.array = self.DB.root.resampled
 		self.imgGen = self._imgGen()
@@ -142,7 +146,7 @@ class testDSBdata(Callback):
 		while True:
 			for index, row in self.DF.iterrows():
 				image = getImage(self.array, row)
-				yield (row['canceer'], image)
+				yield (row['cancer'], image)
 
 
 	def on_epoch_end(self, epoch, logs={}):

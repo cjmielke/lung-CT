@@ -169,7 +169,7 @@ class testDSBdata(Callback):
 
 			testY.append(cancer)
 			y_score.append(prob)
-
+		print testY
 		testY = numpy.concatenate(testY)
 		y_score = numpy.concatenate(y_score)
 

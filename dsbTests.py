@@ -98,7 +98,8 @@ def makeTheCall(image, model, cubeSize):
 		# batch is now a list of cubes .... I think this is all we need for prediciton since its the only input
 		# might need to expand dimensions ...
 
-		pred = model.predict([batch])
+		print batch[0].shape
+		pred = model.predict(batch)
 		#preds = model.pr
 		isNodule, diam, decodedImg = pred[0]
 

@@ -170,7 +170,7 @@ class testDSBdata(Callback):
 			testY.append(cancer)
 			y_score.append(prob)
 
-		print testY
+		print testY, y_score
 		testY = numpy.asarray(testY)
 		y_score = numpy.asarray(y_score)
 

@@ -64,6 +64,7 @@ def generateImageCubeBatches(image, positions, cubeSize, batchSize=8):
 
 			# apply same normalization as in training
 			cube = scaleCube(cube)
+			cube = numpy.expand_dims(cube, axis=3)
 
 			batch.append(cube)
 
@@ -98,6 +99,7 @@ def makeTheCall(image, model, cubeSize):
 		# might need to expand dimensions ...
 
 		pred = model.predict(batch)
+		#preds = model.pr
 		isNodule, diam, decodedImg = pred[0]
 
 		# these should be lists

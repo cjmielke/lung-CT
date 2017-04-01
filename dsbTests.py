@@ -104,7 +104,6 @@ def makeTheCall(image, model, cubeSize):
 
 	noduleScores = numpy.asarray(noduleScores)
 	print 'Nodule scores : ', len(noduleScores), noduleScores.min(), noduleScores.mean(), noduleScores.max()
-	crash
 
 	return noduleScores.max()
 
@@ -146,7 +145,7 @@ class testDSBdata(Callback):
 		while True:
 			for index, row in self.DF.iterrows():
 				image = getImage(self.array, row)
-				yield (row['cancer'], image)
+				yield row['cancer'], image
 
 
 	def on_epoch_end(self, epoch, logs={}):

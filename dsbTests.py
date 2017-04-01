@@ -106,7 +106,7 @@ def makeTheCall(image, model, cubeSize):
 	print 'Nodule scores : ', len(noduleScores), noduleScores.min(), noduleScores.mean(), noduleScores.max()
 	crash
 
-	yield noduleScores.max()
+	return noduleScores.max()
 
 
 

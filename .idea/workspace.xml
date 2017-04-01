@@ -2,18 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ba5e01f0-f744-4870-9fda-67e7ea77479c" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dsbTests.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/dsb_spacing.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/viewExtractedNodules.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/classifierMultitarget.py" afterPath="$PROJECT_DIR$/classifierMultitarget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/extractCubes.py" afterPath="$PROJECT_DIR$/extractCubes.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/full_preprocessing_tutorial.py" afterPath="$PROJECT_DIR$/full_preprocessing_tutorial.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/notes" afterPath="$PROJECT_DIR$/notes" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/preprocLUNA.py" afterPath="$PROJECT_DIR$/preprocLUNA.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/preproc_dsb.py" afterPath="$PROJECT_DIR$/preproc_dsb.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/utils.py" afterPath="$PROJECT_DIR$/utils.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/viewCandidates.py" afterPath="$PROJECT_DIR$/viewCandidates.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/generators.py" afterPath="$PROJECT_DIR$/generators.py" />
     </list>
     <ignored path=".idea/dataSources.local.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,96 +17,19 @@
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="DockManager">
-    <window id="1">
-      <content type="file-editors">
-        <state>
-          <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-            <file leaf-file-name="training.py" pinned="false" current-in-tab="false">
-              <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/engine/training.py">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="385">
-                    <caret line="1693" column="43" selection-start-line="1693" selection-start-column="43" selection-end-line="1693" selection-end-column="43" />
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="common.py" pinned="false" current-in-tab="false">
-              <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/backend/common.py">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="1965">
-                    <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="convolutional.py" pinned="false" current-in-tab="false">
-              <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/layers/convolutional.py">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="7890">
-                    <caret line="547" column="20" selection-start-line="547" selection-start-column="20" selection-end-line="547" selection-end-column="20" />
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-            <file leaf-file-name="firstExp.json" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/fglab/firstExp.json">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="360">
-                    <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-                    <folding />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
     <favorites_list name="code" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.45494747">
+    <splitter split-orientation="vertical" split-proportion="0.46141124">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="callbacks.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/callbacks.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="684">
-                  <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#36#0" expanded="true" />
-                    <element signature="e#268#556#0" expanded="false" />
-                    <element signature="e#651#1183#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
-          <file leaf-file-name="generators.py" pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/generators.py">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="119">
-                  <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
-                  <folding>
-                    <element signature="e#0#16#0" expanded="true" />
-                    <element signature="e#1301#2720#0" expanded="false" />
-                  </folding>
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file leaf-file-name="dsbTests.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/dsbTests.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="315">
-                  <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+                <state relative-caret-position="150">
+                  <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
                   <folding>
                     <element signature="e#0#13#0" expanded="true" />
                   </folding>
@@ -126,9 +40,34 @@
           <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/utils.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="373">
-                  <caret line="124" column="16" selection-start-line="124" selection-start-column="16" selection-end-line="124" selection-end-column="16" />
+                <state relative-caret-position="288">
+                  <caret line="124" column="4" selection-start-line="124" selection-start-column="4" selection-end-line="124" selection-end-column="4" />
                   <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="classifierMultitarget.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-261">
+                  <caret line="322" column="0" selection-start-line="322" selection-start-column="0" selection-end-line="322" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#46#59#0" expanded="true" />
+                    <element signature="e#1556#4714#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="generators.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/generators.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="337">
+                  <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+                  <folding>
+                    <element signature="e#0#16#0" expanded="true" />
+                  </folding>
                 </state>
               </provider>
             </entry>
@@ -137,15 +76,24 @@
       </split-first>
       <split-second>
         <leaf>
-          <file leaf-file-name="classifierMultitarget.py" pinned="false" current-in-tab="true">
-            <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
+          <file leaf-file-name="generators.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/generators.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="568">
-                  <caret line="304" column="0" selection-start-line="304" selection-start-column="0" selection-end-line="304" selection-end-column="0" />
+                <state relative-caret-position="348">
+                  <caret line="389" column="0" selection-start-line="389" selection-start-column="0" selection-end-line="389" selection-end-column="0" />
                   <folding>
-                    <element signature="e#46#59#0" expanded="true" />
-                    <element signature="e#1556#4714#0" expanded="false" />
+                    <element signature="e#0#16#0" expanded="true" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="interpolation.py" pinned="false" current-in-tab="false">
+            <entry file="file:///usr/local/lib/python2.7/dist-packages/scipy/ndimage/interpolation.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="130">
+                  <caret line="627" column="4" selection-start-line="627" selection-start-column="4" selection-end-line="627" selection-end-column="4" />
+                  <folding />
                 </state>
               </provider>
             </entry>
@@ -207,9 +155,9 @@
         <option value="$PROJECT_DIR$/utils.py" />
         <option value="$PROJECT_DIR$/callbacks.py" />
         <option value="$PROJECT_DIR$/dsbTests.py" />
-        <option value="$PROJECT_DIR$/generators.py" />
         <option value="$PROJECT_DIR$/fglab/firstExp.json" />
         <option value="$PROJECT_DIR$/classifierMultitarget.py" />
+        <option value="$PROJECT_DIR$/generators.py" />
       </list>
     </option>
   </component>
@@ -220,10 +168,10 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="65" />
-    <option name="y" value="1104" />
-    <option name="width" value="1855" />
-    <option name="height" value="1056" />
+    <option name="x" value="1953" />
+    <option name="y" value="1932" />
+    <option name="width" value="1047" />
+    <option name="height" value="1908" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -236,7 +184,7 @@
     <ConfirmationsSetting value="0" id="Remove" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1">
+    <navigator proportions="" version="1">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -249,13 +197,7 @@
       <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
-      <pane id="ProjectPane">
-        <subPane />
-      </pane>
-    </panes>
+    <panes />
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -509,7 +451,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="1104" width="1855" height="1056" extended-state="6" />
+    <frame x="1953" y="1932" width="1047" height="1908" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17910448" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -553,8 +495,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/generators.py" />
-    <entry file="file://$PROJECT_DIR$/classifierMultitarget.py" />
     <entry file="file://$PROJECT_DIR$/keras_cnn_brains.py" />
     <entry file="file:///usr/local/lib/python2.7/dist-packages/scipy/ndimage/interpolation.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -605,13 +545,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/foo" />
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/scipy/ndimage/interpolation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="519" column="25" selection-start-line="519" selection-start-column="25" selection-end-line="519" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/oldUtils.py" />
     <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/optimizers.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -693,13 +626,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file:///usr/lib/python2.7/random.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="276" column="8" selection-start-line="276" selection-start-column="8" selection-end-line="276" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///usr/local/lib/python2.7/dist-packages/numpy/lib/npyio.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="309">
@@ -708,22 +634,6 @@
       </provider>
     </entry>
     <entry file="file://$USER_HOME$/mri.py" />
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/backend/common.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1965">
-          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/layers/convolutional.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7890">
-          <caret line="547" column="20" selection-start-line="547" selection-start-column="20" selection-end-line="547" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/dsb_spacing.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -736,7 +646,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30">
           <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -744,7 +653,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="120">
           <caret line="28" column="35" selection-start-line="28" selection-start-column="35" selection-end-line="28" selection-end-column="35" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -752,7 +660,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="13" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -760,9 +667,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
           <caret line="45" column="24" selection-start-line="45" selection-start-column="24" selection-end-line="45" selection-end-column="24" />
-          <folding>
-            <element signature="e#26#35#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -770,9 +674,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="133">
           <caret line="21" column="45" selection-start-line="21" selection-start-column="45" selection-end-line="21" selection-end-column="45" />
-          <folding>
-            <element signature="e#129#141#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -780,7 +681,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-166">
           <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -802,22 +702,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="124" column="16" selection-start-line="124" selection-start-column="16" selection-end-line="124" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/engine/training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="385">
-          <caret line="1693" column="43" selection-start-line="1693" selection-start-column="43" selection-end-line="1693" selection-end-column="43" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/preproc_dsb.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="314">
@@ -826,54 +710,99 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/callbacks.py" />
+    <entry file="file://$PROJECT_DIR$/fglab/firstExp.json" />
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/backend/common.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1965">
+          <caret line="131" column="0" selection-start-line="131" selection-start-column="0" selection-end-line="131" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/layers/convolutional.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7890">
+          <caret line="547" column="20" selection-start-line="547" selection-start-column="20" selection-end-line="547" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dsbTests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+        <state relative-caret-position="150">
+          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/generators.py">
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/keras/engine/training.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-            <element signature="e#1301#2720#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="-100">
+          <caret line="1694" column="22" selection-start-line="1694" selection-start-column="22" selection-end-line="1694" selection-end-column="22" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/callbacks.py">
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/numpy/lib/function_base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="684">
-          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#36#0" expanded="true" />
-            <element signature="e#268#556#0" expanded="false" />
-            <element signature="e#651#1183#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="-95">
+          <caret line="139" column="4" selection-start-line="139" selection-start-column="4" selection-end-line="139" selection-end-column="4" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fglab/firstExp.json">
+    <entry file="file:///usr/lib/python2.7/random.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+        <state relative-caret-position="3639">
+          <caret line="276" column="8" selection-start-line="276" selection-start-column="8" selection-end-line="276" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/numpy/random/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="101" column="7" selection-start-line="101" selection-start-column="7" selection-end-line="101" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python2.7/dist-packages/scipy/ndimage/interpolation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="130">
+          <caret line="627" column="4" selection-start-line="627" selection-start-column="4" selection-end-line="627" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="124" column="4" selection-start-line="124" selection-start-column="4" selection-end-line="124" selection-end-column="4" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/classifierMultitarget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="568">
-          <caret line="304" column="0" selection-start-line="304" selection-start-column="0" selection-end-line="304" selection-end-column="0" />
+        <state relative-caret-position="-261">
+          <caret line="322" column="0" selection-start-line="322" selection-start-column="0" selection-end-line="322" selection-end-column="0" />
           <folding>
             <element signature="e#46#59#0" expanded="true" />
             <element signature="e#1556#4714#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generators.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="337">
+          <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
           </folding>
         </state>
       </provider>

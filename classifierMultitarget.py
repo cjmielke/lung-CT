@@ -313,8 +313,9 @@ if __name__ == '__main__':
 	#imagesSSD = LeafLock(imagesSSD)
 
 	imageDF = pandas.read_csv(DATADIR+'resampledImages.tsv', sep='\t')
-	trainImagesDF = imageDF[imageDF.index % 4 != 0]
+	trainImagesDF = imageDF[imageDF.imgNum % 4 != 0]
 	valImagesDF = imageDF[imageDF.imgNum % 4 == 0]
+	assert len( set(trainImagesDF.imgNum).intersection(set(valImagesDF.imgNum))  ) == 0
 	print len(imageDF), len(trainImagesDF), len(valImagesDF)
 
 
@@ -322,8 +323,8 @@ if __name__ == '__main__':
 	candidatesDF = pandas.read_csv(DATADIR+'resampledCandidates.tsv', sep='\t')#.merge(imageDF, on='imgNum')
 
 	# generators of arbitrary cubes from images
-	tGen = imageCubeGen(imagesSSD, trainImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
-	vGen = imageCubeGen(imagesSSD, valImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
+	#tGen = imageCubeGen(imagesSSD, trainImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
+	#vGen = imageCubeGen(imagesSSD, valImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
 
 
 	candidateGen = CubeGen(DATADIR + 'cubes.h5', DATADIR + 'cubes.tsv', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
@@ -338,7 +339,13 @@ if __name__ == '__main__':
 	encoder, autoencoder = buildAutoencoder(inputShape, filters=args.filters)
 
 
-	stratifiedQ = Batcher(tGen, vGen, trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
+	#stratifiedQ = Batcher(tGen, vGen, trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
+	stratifiedQ = Batcher(
+		candidateGen.trainGen, 
+		candidateGen.valGen, 
+		trainStratified=noduleGen.trainGen, 
+		valStratified=noduleGen.valGen, 
+		batchSize=args.batchSize)
 	#stratifiedQ = Batcher(candidateGen.trainGen, candidateGen.valGen, trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
 
 
@@ -352,14 +359,14 @@ if __name__ == '__main__':
 	autoencoder.fit_generator(
 		stratifiedQ.trainGen,
 		verbose=2,
-		epochs=100,
+		epochs=400,
 		#samples_per_epoch=args.batchSize,
 		steps_per_epoch=1,
 		callbacks=[tb, lh],
 		#class_weight=classWeight,
 		validation_data=stratifiedQ.valGen,
 		validation_steps=1,
-		workers=1,
+		#workers=1,
 		#max_q_size=20
 		#nb_val_samples=64
 	)

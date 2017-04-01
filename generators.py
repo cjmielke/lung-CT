@@ -11,6 +11,10 @@ from utils import normalizeStd, normalizeRange
 
 from utils import normalizeStd, findNodules
 
+
+from scipy.ndimage import affine_transform, rotate
+from numpy.random import random
+
 BATCH_SIZE = 32
 VALIDATION_SIZE = 100
 
@@ -38,6 +42,7 @@ def getImage(imageArray, row, convertType=True):
 	return image, imageNum
 
 
+
 def getNoduleDiameter(row):
 	if row is None: return 0.0
 	else: diam = row.get('diameter_mm',0.0)
@@ -45,15 +50,34 @@ def getNoduleDiameter(row):
 
 
 
+def augmentCube(cube):
+
+	affine = numpy.eye(3) + 0.6*random((3,3))
+	#print affine
+	cube = affine_transform(cube, affine)
+
+	#return ebuc
+	cube = rotate(cube, 360*random(), axes=(0,1), reshape=False)
+	cube = rotate(cube, 360*random(), axes=(1,2), reshape=False)
+
+	return cube
+
+
+
+
 def scaleCube(cube, cubeSize):
+	#return cube
 	#cube = normalizeStd(cube)
 	cube = normalizeRange(cube,MAX_BOUND=500.0)
+	#cube = normalizeRange(cube,MAX_BOUND=1000.0)
 	size = cube.shape[0]
 	if cubeSize!=size:
 		p = size-cubeSize
 		p = p/2
 		cube = cube[p:p+cubeSize, p:p+cubeSize, p:p+cubeSize]
 		assert cube.shape == (cubeSize, cubeSize, cubeSize)
+
+	cube = augmentCube(cube)
 	return cube
 
 
@@ -139,6 +163,8 @@ class CubeGen:
 		self.array = self.DB.root.cubes
 
 
+		print 'pytables array length: ', len(self.array)
+
 		if len(noduleDF) < 1500:
 			print 'storing in ram!'
 			self.array = []
@@ -146,6 +172,10 @@ class CubeGen:
 				noduleNum = int(row['noduleNum'])
 				cube = self.DB.root.cubes[noduleNum]
 				self.array.append(cube)
+
+
+			#self.array[4] *= 0		# tag a single array to see where it pops out
+
 
 		storedCubeSize = self.array[0].shape[0]
 		if cubeSize: self.cubeSize = cubeSize
@@ -180,7 +210,8 @@ class CubeGen:
 
 	def ret(self, row):
 		noduleNum = int(row['noduleNum'])
-		#print noduleNum
+		#print 'noduleNum', noduleNum
+		assert noduleNum < len(self.array)
 		cube = self.array[noduleNum]
 		cube = scaleCube(cube, self.cubeSize)
 		#normImg = normalizeStd(image.clip(min=-1000, max=700))
@@ -205,11 +236,21 @@ class CubeGen:
 	def _trainGen(self):
 		while True:
 			for _, row in self.tNodulesDF.iterrows():
-				yield self.ret(row)
+				res = self.ret(row)
+				#print res[1].mean()
+				yield res
+
 	def _valGen(self):
 		while True:
 			for _, row in self.vNodulesDF.iterrows():
-				yield self.ret(row)
+				res = self.ret(row)
+				#i, c, t = res			# sanity checks
+				#c = numpy.flip(c, axis=0)
+				#c = numpy.flip(c, axis=1)
+				#c = numpy.flip(c, axis=2)
+				#print c.mean()-o.mean()
+				#res = [i, c, t]
+				yield res
 
 
 
@@ -338,11 +379,12 @@ class Batcher:
 			del batchB
 			shuffle(batch)
 			numPos = len([a for a in batch if a[2]['nodule']])
-			assert numPos * 2 == len(batch)
+			#assert numPos * 2 == len(batch)
 
 		#for n, _, _ in batch: assert n % 2 == 0
+		#for n, c, t in batch: assert c.mean() != 0.0
 		#numPos = len([a for a in batch if a[2]['nodule']])
-		#print 'POS/BATCHSIZE %s/%s' % (numPos, len(batch))					# prove that batches are the right balance for training/testing
+		print 'POS/BATCHSIZE %s/%s' % (numPos, len(batch))					# prove that batches are the right balance for training/testing
 		#print len(batch)
 		return self.unpack(batch)
 
@@ -365,10 +407,11 @@ class Batcher:
 			del batchB
 			shuffle(batch)
 			numPos = len([a for a in batch if a[2]['nodule']])
-			assert numPos*2==len(batch)
+			#assert numPos*2==len(batch)
 
 		#numPos = len([a for a in batch if a[2]['nodule']])
-		#print 'POS/BATCHSIZE %s/%s' % (numPos, len(batch))					# prove that batches are the right balance for training/testing
+		#for n, c, t in batch: assert c.mean() != 0.0
+		print 'val POS/BATCHSIZE %s/%s' % (numPos, len(batch))					# prove that batches are the right balance for training/testing
 
 		#for n, _, _ in batch: assert n%2==1
 		return self.unpack(batch)

@@ -9,7 +9,7 @@ import keras.backend as K
 from dsbTests import arrayFile, tsvFile
 from generators import getImage
 
-from dsbTests import getImageCubes
+from dsbTests import getImageCubes, makeBatches
 
 
 def normalize(x): # utility function to normalize a tensor by its L2 norm
@@ -115,7 +115,7 @@ if __name__ == '__main__':
 		cubes, indexPos = getImageCubes(image, cubeSize)
 
 		for cube in cubes:
-			cam = grad_cam(cube, gradient_function)
+			cam = grad_cam([cube], gradient_function)
 			print cam.shape
 
 		c

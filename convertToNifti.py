@@ -36,9 +36,8 @@ image, imgNum = getImage(array, row)
 def vol2Nifti(vol, filename):
 	affine = numpy.eye(4)
 	#oImg = nibabel.Nifti1Image(image, affine, header=img.header)
-	oImg = nibabel.Nifti1Image(vol, affine)
+	oImg = nibabel.Nifti2Image(vol, affine)
 	oImg.to_filename(filename)
-
 
 
 vol2Nifti(image, 'foob.nii')

@@ -51,7 +51,7 @@ def buildGradientFunction(model):
 	loss_layer = model.get_layer('nodule')
 	#loss_layer = model.layers[7]
 	loss = K.sum(loss_layer.output)
-	layer = model.get_layer("pool2")
+	layer = model.get_layer("pool1")
 	conv_output = layer.output
 	grads = normalize(K.gradients(loss, conv_output)[0])
 

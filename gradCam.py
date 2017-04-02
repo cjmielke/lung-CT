@@ -137,7 +137,7 @@ if __name__ == '__main__':
 		print bigCam.shape
 		print bigCam.min(), bigCam.mean(), bigCam.max()
 		numpy.save('cam.npy', bigCam)
-		bigCam = int(1024*bigCam).astype('float32')
+		bigCam = bigCam.astype('float32')
 		vol2Nifti(camShape, 'cam.nii')
 
 

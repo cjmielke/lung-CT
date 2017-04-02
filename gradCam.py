@@ -23,9 +23,13 @@ def grad_cam(image, gradient_function):
 	#print output.shape, grads_val.shape
 
 	output, grads_val = output[0, :], grads_val[0, :, :, :]
+	print output.shape
+	print grads_val.shape
 
 	weights = numpy.mean(grads_val, axis = (0, 1))
 	cam = numpy.ones(output.shape[0 : 2], dtype = numpy.float32)
+
+	print weights.shape
 
 	for i, w in enumerate(weights):
 		cam += w * output[:, :, i]
@@ -34,17 +38,6 @@ def grad_cam(image, gradient_function):
 	cam = cv2.resize(cam, (width, height))
 
 	return cam
-
-
-
-
-
-
-
-
-
-
-
 
 
 

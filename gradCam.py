@@ -106,10 +106,10 @@ if __name__ == '__main__':
 		image, imgNum = getImage(array, row)
 		print image.shape
 
-
 		cubes, indexPos = getImageCubes(image, cubeSize)
 
 		res = []
+		print 'number of cubes returned: ', len(cubes)
 		for cube, pos in zip(cubes,indexPos):
 			cam = grad_cam([cube], gradient_function)
 			res.append((cam, pos))
@@ -123,12 +123,12 @@ if __name__ == '__main__':
 		outSize = nChunks*camShape
 		print outSize
 		bigCam = numpy.zeros(outSize)
-		print bigCam.shape
 
 		cs = camShape[0]
 		for cam, pos in res:
 			z, y, x = pos*camShape
 			print pos, z, y, x
+			print numpy.asarray(pos)
 			print cam.mean()
 			bigCam[z:z+cs, y:y+cs, x:x+cs] = cam 
 

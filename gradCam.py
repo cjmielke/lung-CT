@@ -27,7 +27,7 @@ def grad_cam(image, gradient_function):
 	print 'grads_val', grads_val.shape
 
 	weights = numpy.mean(grads_val, axis = (0, 1, 2))
-	cam = numpy.ones(output.shape[0 : 2], dtype = numpy.float32)
+	cam = numpy.ones(output.shape[0 : 3], dtype = numpy.float32)
 
 	print 'weights_shape', weights.shape
 	print 'cam shape', cam.shape

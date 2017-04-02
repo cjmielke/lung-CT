@@ -10,6 +10,7 @@ from dsbTests import arrayFile, tsvFile
 from generators import getImage
 
 from dsbTests import getImageCubes, makeBatches
+from convertToNifti import vol2Nifti
 
 
 def normalize(x): # utility function to normalize a tensor by its L2 norm
@@ -131,7 +132,7 @@ if __name__ == '__main__':
 
 
 		print bigCam.shape
-
+		vol2Nifti(camShape, 'cam.nii.gz')
 
 
 

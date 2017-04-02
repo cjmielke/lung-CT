@@ -133,6 +133,7 @@ if __name__ == '__main__':
 
 		print bigCam.shape
 		print bigCam.min(), bigCam.mean(), bigCam.max()
+		bigCam = int(1024*bigCam).astype('int16')
 		vol2Nifti(camShape, 'cam.nii')
 
 

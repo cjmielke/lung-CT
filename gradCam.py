@@ -33,7 +33,7 @@ def grad_cam(image, gradient_function):
 	print 'cam shape', cam.shape
 
 	for i, w in enumerate(weights):
-		cam += w * output[:, :, i]
+		cam += w * output[:, :, :, i]
 
 	_, height, width, _ = image.shape
 	cam = cv2.resize(cam, (width, height))

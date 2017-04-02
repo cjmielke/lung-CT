@@ -132,7 +132,7 @@ if __name__ == '__main__':
 
 
 		print bigCam.shape
-		vol2Nifti(camShape, 'camb.nii')
+		vol2Nifti(camShape, 'cam.nii')
 
 
 

@@ -9,6 +9,8 @@ import keras.backend as K
 from dsbTests import arrayFile, tsvFile
 from generators import getImage
 
+from dsbTests import getImageCubes
+
 
 def normalize(x): # utility function to normalize a tensor by its L2 norm
 	return x / (K.sqrt(K.mean(K.square(x))) + 1e-5)
@@ -91,21 +93,12 @@ if __name__ == '__main__':
 	DF = DF.sample(frac=1)
 	DF = DF[DF.cancer != -1]  # remove images from the submission set
 
-	DF = DF.head(10)
-
-
-
-
+	DF = DF.head(1)
 
 
 
 	model.compile('sgd', 'binary_crossentropy')
-
-
 	gradient_function = buildGradientFunction(model)
-
-
-
 
 
 
@@ -118,9 +111,13 @@ if __name__ == '__main__':
 		image, imgNum = getImage(array, row)
 		print image.shape
 
-		cam = grad_cam(image, gradient_function)
 
-		print cam.shape
+		cubes, indexPos = getImageCubes(image, cubeSize)
+
+		for cube in cubes:
+			cam = grad_cam(cube, gradient_function)
+			print cam.shape
+
 		c
 
 

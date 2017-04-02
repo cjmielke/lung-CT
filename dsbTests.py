@@ -53,10 +53,11 @@ def getImageCubes(image, cubeSize):
 
 
 	cubes = []
+	indexPosL = []
 	for pos in positions:
-		pos = numpy.asarray(pos)
-		pos *= cubeSize
-		z, y, x = pos
+		indexPos = numpy.asarray(pos)
+		realPos = indexPos*cubeSize
+		z, y, x = realPos
 
 		cube = image[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
 		assert cube.shape == (cubeSize, cubeSize, cubeSize)
@@ -68,8 +69,9 @@ def getImageCubes(image, cubeSize):
 		cube = numpy.expand_dims(cube, axis=3)
 
 		cubes.append(cube)
+		indexPosL.append(indexPos)
 
-	return cubes
+	return cubes, indexPos
 
 
 
@@ -86,7 +88,7 @@ def makeTheCall(image, model, cubeSize):
 
 	batchSize = 128
 
-	cubes = getImageCubes(image, cubeSize)
+	cubes, _ = getImageCubes(image, cubeSize)
 	gen = makeBatches(cubes, batchSize)
 
 	nBatches = len(cubes)/batchSize

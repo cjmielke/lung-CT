@@ -113,7 +113,7 @@ if __name__ == '__main__':
 		for cube, pos in zip(cubes,indexPos):
 			cam = grad_cam([cube], gradient_function)
 			res.append((cam, pos))
-			break
+			#break
 			print cam.shape
 
 

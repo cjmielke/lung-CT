@@ -134,6 +134,8 @@ if __name__ == '__main__':
 			bigCam[z:z+cs, y:y+cs, x:x+cs] = cam 
 
 
+
+
 		print bigCam.shape
 		print bigCam.min(), bigCam.mean(), bigCam.max()
 		numpy.savez('cam.npyz', bigCam)

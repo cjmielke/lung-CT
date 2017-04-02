@@ -71,7 +71,7 @@ def getImageCubes(image, cubeSize):
 		cubes.append(cube)
 		indexPosL.append(indexPos)
 
-	return cubes, indexPos
+	return cubes, indexPosL
 
 
 

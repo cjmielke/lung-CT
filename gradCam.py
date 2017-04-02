@@ -30,6 +30,7 @@ def grad_cam(image, gradient_function):
 	cam = numpy.ones(output.shape[0 : 2], dtype = numpy.float32)
 
 	print 'weights_shape', weights.shape
+	print 'cam shape', cam.shape
 
 	for i, w in enumerate(weights):
 		cam += w * output[:, :, i]

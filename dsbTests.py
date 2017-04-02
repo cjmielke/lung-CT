@@ -11,10 +11,11 @@ import json
 import pandas, tables
 import itertools
 
-from generators import getImage, scaleCube
+from generators import getImage, prepCube
 
 DATADIR = '/data/datasets/lung/resampled_order1/'
-
+tsvFile = DATADIR+'resampledImages.tsv'
+arrayFile = DATADIR+'resampled.h5'
 
 #imagesDF = pandas.read_csv(DATADIR + 'resampledImages.tsv', sep='\t')
 
@@ -30,45 +31,45 @@ DATADIR = '/data/datasets/lung/resampled_order1/'
 
 
 
-def batch(iterable, n=1):
+def makeBatches(iterable, n=1):
 	l = len(iterable)
 	for i in range(0, l, n):
-		yield iterable[i: min(i+n, l)]
-
-def batchGen(generator, n=1):
-	batch = []
-	for i in range(0, n):
-		v = generator.next()
-		batch.append(v)
-	yield batch
-
+		batch = iterable[i: min(i+n, l)]
+		batch = numpy.asarray(batch)
+		yield batch
 
 
 # generator for image cubes, which might make batching easier to implement
-def generateImageCubeBatches(image, positions, cubeSize, batchSize=32):
+def getImageCubes(image, cubeSize):
 
-	l = len(positions)
-	for i in range(0, l, batchSize):
-		batchPositions = positions[i: min(i+batchSize, l)]
+	# loop over the image, extracting cubes and applying model
+	dim = numpy.asarray(image.shape)
+	print 'dimension of image: ', dim
 
-		batch = []
-		for pos in batchPositions:
-			pos = numpy.asarray(pos)
-			pos *= cubeSize
-			z, y, x = pos
+	nChunks = dim / cubeSize
+	# print 'Number of chunks in each direction: ', nChunks
 
-			cube = image[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
-			assert cube.shape == (cubeSize, cubeSize, cubeSize)
+	positions = [p for p in itertools.product(*map(xrange, nChunks))]
 
-			if cube.mean() < -3000: continue
 
-			# apply same normalization as in training
-			cube = scaleCube(cube)
-			cube = numpy.expand_dims(cube, axis=3)
+	cubes = []
+	for pos in positions:
+		pos = numpy.asarray(pos)
+		pos *= cubeSize
+		z, y, x = pos
 
-			batch.append(cube)
+		cube = image[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
+		assert cube.shape == (cubeSize, cubeSize, cubeSize)
 
-		yield batch
+		if cube.mean() < -1000: continue
+
+		# apply same normalization as in training
+		cube = prepCube(cube, augment=False)
+		cube = numpy.expand_dims(cube, axis=3)
+
+		cubes.append(cube)
+
+	return cubes
 
 
 
@@ -80,40 +81,29 @@ def makeTheCall(image, model, cubeSize):
 	:return: probability
 	'''
 
-	
-
-	# loop over the image, extracting cubes and applying model
-	dim = numpy.asarray(image.shape)
-	print 'dimension of image: ', dim
-
-	nChunks = dim / cubeSize
-	# print 'Number of chunks in each direction: ', nChunks
-
-	positions = [p for p in itertools.product(*map(xrange, nChunks))]
-
 	noduleScores = []
 
-	for batch in generateImageCubeBatches(image, positions, cubeSize):
 
-		# batch is now a list of cubes .... I think this is all we need for prediciton since its the only input
-		# might need to expand dimensions ...
+	batchSize = 128
 
-		#print batch[0].shape
-		batch = numpy.asarray(batch)
-		pred = model.predict(batch)
-		#print pred
-		#preds = model.pr
-		isNodule, diam, decodedImg = pred
+	cubes = getImageCubes(image, cubeSize)
+	gen = makeBatches(cubes, batchSize)
 
-		# these should be lists
-		noduleScores.append(isNodule)
+	nBatches = len(cubes)/batchSize
+	#gen = generateImageCubeBatches(image, positions, cubeSize, batchSize=batchSize)
+	predictions = model.predict_generator(gen, nBatches,
+										  max_q_size=4,
+										  workers=4,
+										  pickle_safe=True,
+										  verbose=1)
 
-
+	isNodule, diam, decodedImg = predictions
+	noduleScores.append(isNodule)
 
 	noduleScores = numpy.asarray(noduleScores)
 	print 'Nodule scores : ', len(noduleScores), noduleScores.min(), noduleScores.mean(), noduleScores.max()
 
-	return noduleScores.max()
+	return noduleScores
 
 
 
@@ -138,12 +128,12 @@ class testDSBdata(Callback):
 		self.period = period
 		self.numImages = numImages
 
-		DF = pandas.read_csv(DATADIR+'resampledImages.tsv', sep='\t')
+		DF = pandas.read_csv(tsvFile, sep='\t')
 		self.DF = DF[DF.cancer != -1]		# remove images from the submission set
 		print 'Images in DSB dataset: ', len(DF), len(self.DF)
 
 
-		self.DB = tables.open_file(DATADIR+'resampled.h5', mode='r')
+		self.DB = tables.open_file(arrayFile, mode='r')
 		self.array = self.DB.root.resampled
 		self.imgGen = self._imgGen()
 
@@ -161,7 +151,9 @@ class testDSBdata(Callback):
 
 		#if not hasattr(self, 'model'): return
 
-		cubeSize = 32		# FIXME, infer from model input size
+		#cubeSize = 32		# FIXME, infer from model input size
+		_, x,y,z, channels = self.model.input_shape
+		cubeSize = x
 
 		testY = []
 		y_score = []
@@ -172,7 +164,9 @@ class testDSBdata(Callback):
 
 			cancer, image = self.imgGen.next()
 
-			prob = makeTheCall(image, self.model, cubeSize)
+			noduleScores = makeTheCall(image, self.model, cubeSize)
+			prob = noduleScores.max()
+			print 'cancer/probability :', cancer, prob
 
 			testY.append(cancer)
 			y_score.append(prob)
@@ -192,7 +186,7 @@ class testDSBdata(Callback):
 		if auc is None:
 			print self.prefix, 'AUC is None'
 			return
-		if np.isnan(auc):
+		if numpy.isnan(auc):
 			print self.prefix, 'AUC is NaN'
 			return
 
@@ -214,4 +208,49 @@ class testDSBdata(Callback):
 
 
 
+if __name__ == '__main__':
+	import sys
+	from keras.models import load_model
+
+	modelFile = sys.argv[1]
+	model = load_model(modelFile)
+	_, x,y,z, channels = model.input_shape
+	cubeSize = x
+
+	DB = tables.open_file(arrayFile, mode='r')
+	array = DB.root.resampled
+
+
+	DF = pandas.read_csv(tsvFile, sep='\t')
+	DF = DF.sample(frac=1)
+	DF = DF[DF.cancer != -1]  # remove images from the submission set
+
+	DF = DF.head(10)
+
+	testY = []
+	y_score = []
+
+	for index, row in DF.iterrows():
+		cancer = row['cancer']
+		image, imgNum = getImage(array, row)
+		print image.shape
+
+
+		noduleScores = makeTheCall(image, model, cubeSize)
+		prob = noduleScores.max()
+		print 'cancer/probability :', cancer, prob
+
+		testY.append(cancer)
+		y_score.append(prob)
+
+	print testY, y_score
+	testY = numpy.asarray(testY)
+	y_score = numpy.asarray(y_score)
+
+	#print testY.shape, y_score.shape
+
+	# extract and integrate ROC curve manually
+	fpr, tpr, thresholds = roc_curve(testY, y_score, pos_label=1, sample_weight=None, drop_intermediate=True)
+
+	auc = integrate.trapz(tpr, fpr)
 

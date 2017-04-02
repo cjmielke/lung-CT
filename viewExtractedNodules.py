@@ -96,7 +96,7 @@ print cubeSize
 
 #from generators import prepVGGimages
 
-bigArrSize = 3*cubeSize
+bigArrSize = 1*cubeSize
 
 arr = numpy.zeros((bigArrSize,bigArrSize,bigArrSize))
 
@@ -114,12 +114,16 @@ for index, pos in enumerate(itertools.product(*map(xrange, nChunks))):
 
 	print pos
 
-	cube = cubes[index]
+	cube = cubes[index+2]
+	from generators import augmentCube
+	cube = augmentCube(cube)
 	labels, seg = segmentNodule(cube, threshold=-600)
 
-	arr[z:z+cubeSize, y: y+cubeSize, x: x+cubeSize] = labels
+	#arr[z:z+cubeSize, y: y+cubeSize, x: x+cubeSize] = labels
 	#arr[z:z+cubeSize, y: y+cubeSize, x: x+cubeSize] = seg
-	#arr[z:z + cubeSize, y: y + cubeSize, x: x + cubeSize] = cube
+
+	# raw images, without segmentation
+	arr[z:z + cubeSize, y: y + cubeSize, x: x + cubeSize] = cube
 
 
 

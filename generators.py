@@ -55,32 +55,34 @@ def getNoduleDiameter(row):
 
 def augmentCube(cube):
 
-	affine = numpy.eye(3) + 0.6*random((3,3))
+	affine = numpy.eye(3) + 0.4*(random((3,3))-0.5)
 	#print affine
-	cube = affine_transform(cube, affine)
 
 	#return ebuc
 	cube = rotate(cube, 360*random(), axes=(0,1), reshape=False)
 	cube = rotate(cube, 360*random(), axes=(1,2), reshape=False)
+
+	cube = affine_transform(cube, affine)
 
 	return cube
 
 
 
 
-def scaleCube(cube):
+def prepCube(cube, augment=True):
 	cubeSize = cube.shape[0]
 	#cube = normalizeStd(cube)
 	cube = normalizeRange(cube,MAX_BOUND=500.0)
 	#cube = normalizeRange(cube,MAX_BOUND=1000.0)
 	size = cube.shape[0]
+
 	if cubeSize!=size:
 		p = size-cubeSize
 		p = p/2
 		cube = cube[p:p+cubeSize, p:p+cubeSize, p:p+cubeSize]
 		assert cube.shape == (cubeSize, cubeSize, cubeSize)
 
-	cube = augmentCube(cube)
+	if augment: cube = augmentCube(cube)
 	return cube
 
 
@@ -216,7 +218,7 @@ class CubeGen:
 		#print 'noduleNum', noduleNum
 		assert noduleNum < len(self.array)
 		cube = self.array[noduleNum]
-		cube = scaleCube(cube)
+		cube = prepCube(cube)
 		#normImg = normalizeStd(image.clip(min=-1000, max=700))
 
 		if self.allNodules: nodule=1.0
@@ -265,8 +267,6 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 
 			image, imageNum = getImage(imageArray, row)
 
-			#normImg = normalizeStd(image.clip(min=-1000, max=700))					# careful! dont bias these differently than the nodules!
-
 			nodules = noduleDF[noduleDF.imgNum==imageNum]
 			candidates = candidatesDF[candidatesDF.imgNum==imageNum]
 
@@ -294,7 +294,7 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 					#print 'empty cube'
 					continue
 
-				cube = scaleCube(cube)
+				cube = prepCube(cube)
 
 				#cube = normImg[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
 				#print cube.min(), cube.mean(), cube.max()

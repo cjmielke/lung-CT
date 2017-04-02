@@ -185,14 +185,14 @@ def buildAutoencoder(inputShape, filters=64, filterScale=2, batchNorm=True, shar
 	x = Convolution3D(fo, (3, 3, 3), activation='relu', padding='same')(x)
 	x = Convolution3D(fo, (3, 3, 3), activation='relu', padding='same')(x)
 	#x = MaxPooling3D((2, 2, 2), border_mode=border)(x)
-	x = MaxPooling3D()(x)
+	x = MaxPooling3D(name='pool1')(x)
 
 	#x = Convolution3D(8, cs, cs, cs, activation='relu', border_mode=border)(x)
 	#x = MaxPooling3D((2, 2, 2 ), border_mode=border)(x)
 
 	x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
 	x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
-	x = MaxPooling3D()(x)
+	x = MaxPooling3D(name='pool2')(x)
 
 	#x = Convolution3D(8, cs, cs, cs, activation='relu', border_mode=border)(x)
 	#x = Convolution3D(8, cs, cs, cs, activation='relu', border_mode=border)(x)
@@ -323,8 +323,8 @@ if __name__ == '__main__':
 	candidatesDF = pandas.read_csv(DATADIR+'resampledCandidates.tsv', sep='\t')#.merge(imageDF, on='imgNum')
 
 	# generators of arbitrary cubes from images
-	#tGen = imageCubeGen(imagesSSD, trainImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
-	#vGen = imageCubeGen(imagesSSD, valImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
+	tGen = imageCubeGen(imagesSSD, trainImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
+	vGen = imageCubeGen(imagesSSD, valImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
 
 
 	candidateGen = CubeGen(DATADIR + 'cubes.h5', DATADIR + 'cubes.tsv', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
@@ -339,18 +339,20 @@ if __name__ == '__main__':
 	encoder, autoencoder = buildAutoencoder(inputShape, filters=args.filters)
 
 
-	#stratifiedQ = Batcher(tGen, vGen, trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
 	stratifiedQ = Batcher(
-		candidateGen.trainGen, 
-		candidateGen.valGen, 
-		trainStratified=noduleGen.trainGen, 
-		valStratified=noduleGen.valGen, 
+		tGen, vGen,
+		trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
+
+	'''
+	stratifiedQ = Batcher(
+		candidateGen.trainGen, candidateGen.valGen,
+		trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen,
 		batchSize=args.batchSize)
-	#stratifiedQ = Batcher(candidateGen.trainGen, candidateGen.valGen, trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
+	'''
 
 
 	from dsbTests import testDSBdata
-	tester = testDSBdata(period=10, numImages=2)
+	#tester = testDSBdata(period=10, numImages=2)
 
 	#cAUC = ComputeAUC(batch=dq.valBatch, prefix='v_', period=50)
 	#cAUCt = ComputeAUC(batch=dq.trainBatch, prefix='t_', period=50)
@@ -365,7 +367,7 @@ if __name__ == '__main__':
 		epochs=400,
 		#samples_per_epoch=args.batchSize,
 		steps_per_epoch=1,
-		callbacks=[tb, lh, tester],
+		callbacks=[tb, lh],
 		#class_weight=classWeight,
 		validation_data=stratifiedQ.valGen,
 		validation_steps=1,
@@ -374,7 +376,7 @@ if __name__ == '__main__':
 		#nb_val_samples=64
 	)
 
-	#classifier.save(OUTDIR + 'finetune.h5')
+	autoencoder.save(OUTDIR + 'lungAutoencoder.h5')
 
 	lh.writeLog(lastN=100)
 

@@ -47,10 +47,24 @@ def grad_cam(image, gradient_function):
 
 
 
+def buildGradientFunction(model):
 
 
+	# loss_layer = 'predictions'
+	loss_layer = model.get_layer('nodule')
+	#loss_layer = model.layers[7]
+	loss = K.sum(loss_layer.output)
+	layer = model.get_layer("pool2")
+	conv_output = layer.output
+	grads = normalize(K.gradients(loss, conv_output)[0])
+
+	gradient_function = K.function(
+		[model.layers[0].input, K.learning_phase()],
+		[conv_output, grads]
+	)
 
 
+	return gradient_function
 
 
 
@@ -87,19 +101,8 @@ if __name__ == '__main__':
 
 	model.compile('sgd', 'binary_crossentropy')
 
-	# loss_layer = 'predictions'
-	loss_layer = model.get_layer('nodule')
-	#loss_layer = model.layers[7]
-	loss = K.sum(loss_layer.output)
-	layer = model.get_layer("pool2")
-	conv_output = layer.output
-	grads = normalize(K.gradients(loss, conv_output)[0])
 
-	gradient_function = K.function(
-		[model.layers[0].input, K.learning_phase()],
-		[conv_output, grads]
-	)
-
+	gradient_function = buildGradientFunction(model)
 
 
 
@@ -119,3 +122,16 @@ if __name__ == '__main__':
 
 		print cam.shape
 		c
+
+
+
+
+
+
+
+
+
+
+
+
+

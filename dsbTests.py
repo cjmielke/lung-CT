@@ -217,6 +217,9 @@ if __name__ == '__main__':
 	_, x,y,z, channels = model.input_shape
 	cubeSize = x
 
+	from gradCam import grad_cam, buildGradientFunction
+	gradient_function = buildGradientFunction(model)
+
 	DB = tables.open_file(arrayFile, mode='r')
 	array = DB.root.resampled
 
@@ -234,6 +237,8 @@ if __name__ == '__main__':
 		cancer = row['cancer']
 		image, imgNum = getImage(array, row)
 		print image.shape
+
+		cam = grad_cam(image, gradient_function)
 
 
 		noduleScores = makeTheCall(image, model, cubeSize)
@@ -253,4 +258,10 @@ if __name__ == '__main__':
 	fpr, tpr, thresholds = roc_curve(testY, y_score, pos_label=1, sample_weight=None, drop_intermediate=True)
 
 	auc = integrate.trapz(tpr, fpr)
+
+
+
+
+
+
 

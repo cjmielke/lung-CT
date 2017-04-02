@@ -128,8 +128,8 @@ if __name__ == '__main__':
 		cs = camShape[0]
 		for cam, pos in res:
 			z, y, x = pos*camShape
+			print pos, z, y, x
 			print cam.mean()
-			print x,y,z
 			bigCam[z:z+cs, y:y+cs, x:x+cs] = cam 
 
 

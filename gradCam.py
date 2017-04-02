@@ -125,7 +125,7 @@ if __name__ == '__main__':
 		print bigCam.shape
 
 		for cam, pos in res:
-			
+			pass			
 
 		c
 

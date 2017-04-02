@@ -124,10 +124,14 @@ if __name__ == '__main__':
 		bigCam = numpy.zeros(outSize)
 		print bigCam.shape
 
+		cs = camShape[0]
 		for cam, pos in res:
-			pass			
+			z, y, x = pos*camShape
+			bigCam[z:z+cs, y:y+cs, x:x+cs] = cam 
 
-		c
+
+		print bigCam.shape
+
 
 
 

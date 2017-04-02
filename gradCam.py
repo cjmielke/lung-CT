@@ -114,7 +114,7 @@ if __name__ == '__main__':
 			cam = grad_cam([cube], gradient_function)
 			res.append((cam, pos))
 			#break
-			print cam.shape
+			#print cam.shape
 
 
 		firstCam, _ = res[0]

@@ -107,6 +107,7 @@ if __name__ == '__main__':
 		print image.shape
 
 		cubes, indexPos = getImageCubes(image, cubeSize)
+		print indexPos
 
 		res = []
 		print 'number of cubes returned: ', len(cubes)

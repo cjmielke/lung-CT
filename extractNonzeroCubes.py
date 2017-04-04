@@ -55,6 +55,7 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 			s.name = cubeNum
 			cubeNum += 1
 			cubeDF = cubeDF.append(s)
+			print cube.min(), cube.mean(), cube.max()
 			cubesArray.append([cube])
 
 
@@ -87,8 +88,8 @@ if __name__ == '__main__':
 
 
 	DATADIR = '/data/datasets/lung/resampled_order1/'
-	arrayFile = DATADIR + 'segmented.h5'
-	arrayOut = DATADIR + 'segmentedNonzero.h5'
+	arrayFile = DATADIR + 'segmented_again.h5'
+	arrayOut = DATADIR + 'segmentedNonzero_again.h5'
 
 	extractNonzero(arrayFile, arrayOut)
 

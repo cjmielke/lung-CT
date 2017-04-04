@@ -2,11 +2,8 @@
 
 
 
-import numpy
-import pandas
-import tables
-
 import keras.backend as K
+import numpy
 from scipy.stats import describe
 
 from convertToNifti import vol2Nifti

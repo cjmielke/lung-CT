@@ -85,8 +85,6 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 if __name__ == '__main__':
 
 
-
-
 	#testSegmentation()
 	#sys.exit(0)
 

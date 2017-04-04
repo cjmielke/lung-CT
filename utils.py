@@ -190,6 +190,7 @@ class ImageArray():
 		:return: (pytables_array, pandas_dataframe) 
 		"""
 
+
 		path, f = os.path.split(arrayFile)
 		#print path
 		fileName, ext = os.path.splitext(f)

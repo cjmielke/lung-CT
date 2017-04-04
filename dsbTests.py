@@ -194,6 +194,7 @@ class SparseImageSource():
 		cs = self.cubeSize
 		for cubeRow in imageCubes.iterrows():
 			z, y, z = cubeRow[['realZ', 'realY', 'realX']].as_matrix()
+			print z, y, x
 			cubeNum = cubeRow['cubeNum']
 			image[z:z+cs, y:y+cs, x:x+cs] = self.array[cubeNum] 
 

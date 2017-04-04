@@ -241,7 +241,7 @@ def getImage(imageArray, row, convertType=True):
 	return image, imageNum
 
 
-def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True):
+def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True, prep=True):
 
 	# loop over the image, extracting cubes and applying model
 	dim = numpy.asarray(image.shape)
@@ -269,7 +269,7 @@ def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True)
 			if cube.mean() <= -1000: continue
 
 		# apply same normalization as in training
-		cube = prepCube(cube, augment=False)
+		if prep: cube = prepCube(cube, augment=False)
 
 		if expandChannelDim: cube = numpy.expand_dims(cube, axis=3)
 

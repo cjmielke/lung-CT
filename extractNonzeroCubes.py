@@ -35,7 +35,7 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 		print image.shape
 
 
-		cubes, positions = getImageCubes(image, cubeSize)
+		cubes, positions = getImageCubes(image, cubeSize, prep=False)
 		print 'Got %d cubes' % len(cubes)
 
 		for cube, pos in zip(cubes, positions):
@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
 	DATADIR = '/data/datasets/lung/resampled_order1/'
 	arrayFile = DATADIR + 'segmented.h5'
-	arrayOut = DATADIR + 'segmentedNonzero_again.h5'
+	arrayOut = DATADIR + 'segmentedNonzero.h5'
 
 	extractNonzero(arrayFile, arrayOut)
 

@@ -191,10 +191,10 @@ class ImageArray():
 		"""
 
 		path, f = os.path.split(arrayFile)
-		print path
+		#print path
 		fileName, ext = os.path.splitext(f)
 		assert ext=='.h5'
-		print path, fileName
+		#print path, fileName
 
 		if not tsvFile: tsvFile = os.path.join(path, fileName) + '.tsv'
 		self.DF = pandas.read_csv(tsvFile, sep='\t')

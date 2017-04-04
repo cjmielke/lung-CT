@@ -198,7 +198,9 @@ class SparseImageSource():
 			z, y, x = cubeRow[['realZ', 'realY', 'realX']].as_matrix()
 			#print image.shape, z, y, x
 			cubeNum = cubeRow['cubeNum']
-			image[z:z+cs, y:y+cs, x:x+cs, :] = self.array[cubeNum] 
+			cube = self.array[cubeNum]
+			print 'cube stats: ', cube.min(), cube.mean(), cube.max()
+			image[z:z+cs, y:y+cs, x:x+cs, :] = cube 
 
 		print image.dtype
 		#if convertType:

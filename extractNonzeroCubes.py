@@ -5,7 +5,7 @@ import tables
 from tqdm import trange, tqdm
 
 from dsbTests import tsvFile, getImageCubes
-from utils import ImageArray, getImage
+from utils import ImageArray, getImage, getImageCubes
 
 
 def extractNonzero(arrayFile, arrayOut, cubeSize=32):

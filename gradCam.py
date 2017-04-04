@@ -6,7 +6,7 @@ import tables, dicom, pandas, numpy, sys, cv2, timeit
 from keras.models import load_model
 import keras.backend as K
 
-from utils import getImage
+from utils import getImage, getImageCubes
 
 from dsbTests import getImageCubes, makeBatches
 from convertToNifti import vol2Nifti

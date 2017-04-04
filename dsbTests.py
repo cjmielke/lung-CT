@@ -1,17 +1,12 @@
+import numpy
 import pandas
 import tables
 from keras.callbacks import Callback
-from pkg_resources import parse_version
-from sklearn.metrics import roc_auc_score, roc_curve
 from scipy import integrate
-from keras import backend as K
-import numpy
-import os
-import json
-import pandas, tables
-import itertools
+from sklearn.metrics import roc_curve
+from gradCam import buildGradientFunction
 
-from generators import prepCube
+from utils import getImage, getImageCubes, ImageArray
 
 DATADIR = '/data/datasets/lung/resampled_order1/'
 tsvFile = DATADIR+'resampledImages.tsv'
@@ -47,53 +42,12 @@ def makeBatches(iterable, n=1):
 
 
 
-# generator for image cubes, which might make batching easier to implement
-def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True):
-
-	# loop over the image, extracting cubes and applying model
-	dim = numpy.asarray(image.shape)
-	print 'dimension of image: ', dim
-
-	nChunks = dim / cubeSize
-	# print 'Number of chunks in each direction: ', nChunks
-
-	positions = [p for p in itertools.product(*map(xrange, nChunks))]
-
-	#if filterBackground: image[image<-1000] = -1000			# dont let weird background values bias things
-
-
-	cubes = []
-	indexPosL = []
-	for pos in positions:
-		indexPos = numpy.asarray(pos)
-		realPos = indexPos*cubeSize
-		z, y, x = realPos
-
-		cube = image[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
-		assert cube.shape == (cubeSize, cubeSize, cubeSize)
-
-		if filterBackground:
-			if cube.mean() <= -1000: continue
-
-		# apply same normalization as in training
-		cube = prepCube(cube, augment=False)
-
-		if expandChannelDim: cube = numpy.expand_dims(cube, axis=3)
-
-		cubes.append(cube)
-		indexPosL.append(indexPos)
-
-	print 'Rejected %d cubes ' % (len(positions) - len(cubes))
-	#assert len(cubes), 'Damn, no cubes. Image stats: %s %s %s ' % (image.min(), image.mean(), image.max())
-	#assert len(indexPosL)
-	return cubes, indexPosL
-
 
 
 
 def makeTheCall(image, model, cubeSize):
 	'''
-	
+	Classify an image
 	:param lungImg: the image of the lung from the DSB data set 
 	:param model: the current nodule detection model
 	:return: probability
@@ -224,6 +178,32 @@ class testDSBdata(Callback):
 
 
 
+
+class SparseImageSource():
+	def __init__(self, arrayFile, tsvFile=None):
+		sparseImages = ImageArray(arrayFile, tsvFile=tsvFile)
+		self.DF = sparseImages.DF
+		self.array = sparseImages.array
+		self.cubeSize = self.array[0].shape[0]
+
+	def getImageFromSparse(self, row, convertType=True):
+		shape = row[['shapeZ', 'shapeY', 'shapeX']].as_matrix()
+		imageNum = row['imageNum']
+		image = numpy.zeros(shape)
+
+		imageCubes = self.DF[self.DF.imgNum==imageNum]
+		cs = self.cubeSize
+		for cubeRow in imageCubes.iterrows():
+			z, y, z = row[['realZ', 'realY', 'realX']].as_matrix()
+			cubeNum = row['cubeNum']
+			image[z:z+cs, y:y+cs, x:x+cs] = self.array[cubeNum] 
+
+		if convertType:
+			if image.dtype != K.floatx(): image = image.astype(K.floatx())
+
+		return image
+
+
 if __name__ == '__main__':
 	import sys
 	from keras.models import load_model
@@ -233,38 +213,23 @@ if __name__ == '__main__':
 	_, x,y,z, channels = model.input_shape
 	cubeSize = x
 
-	from gradCam import grad_cam, buildGradientFunction
 	gradient_function = buildGradientFunction(model)
 
+	dsbImages = ImageArray(arrayFile, tsvFile=tsvFile)
+	array, DF = dsbImages.array, dsbImages.DF
 
-
-
-	DB = tables.open_file(arrayFile, mode='r')
-	array = DB.root.resampled
-
-
-	DF = pandas.read_csv(tsvFile, sep='\t')
-	#DF = DF.sample(frac=1)
 	DF = DF[DF.cancer != -1]  # remove images from the submission set
-
 	DF = DF.head(1)
 
-	testY = []
-	y_score = []
+	testY, y_score = [], []
 
 	for index, row in DF.iterrows():
 		cancer = row['cancer']
 		image, imgNum = getImage(array, row)
 
-		from utils import boundingBox, getImage
-
-		crop = boundingBox(image)
-
 		print image.shape
 
 		#cam = grad_cam(image, gradient_function)
-
-
 		noduleScores = makeTheCall(image, model, cubeSize)
 		prob = noduleScores.max()
 		print 'cancer/probability :', cancer, prob

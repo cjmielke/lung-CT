@@ -1,3 +1,39 @@
+ANTS 3 -m PR[fixed.nii.gz,moving.nii.gz,1,2] -i 50x20x10 -o moved.nii.gz -t SyN[0.3] -r Gauss[3,0]
+WarpImageMultiTransform 3 moving.nii.gz output.nii.gz -R fixed.nii.gz movedWarp.nii.gz movedAffine.txt 
+fslmaths output.nii.gz -thr 300 out.nii.gz
+
+
+
+
+TODO:
+
+
+
+Organize files to make them more clear
+    We need resampled and segmented datasets, each with their own downstream cube sources for training
+
+Try extracting cubes from the segmented DSB images and store them in a single array, alongside
+    a corresponding TSV file that has imgNum | Xind | Yind | Zind | Xpos | Ypos | Zpos information
+
+    This could produce a DSB callback that runs in reasonable time ....
+
+
+Implement selection between raw and segmented training in FGLab so comparisons can be made
+
+Try evaluating network on LUNA datasets to see if extreme classifications still result
+
+Build softmax representation of noduleSize/cancer classes to see if evaluation improves
+
+Try alternate cube Sizes
+
+Get ANTS working
+    See if registration on low-res images can be used to transform high res images
+    Try bone-only or lung-only registrations
+
+Use ANTS to transform GRAD maps into a new trainable space
+
+
+
 resampledNodulesDF.join(imageDF, on='imgNum')
 
 

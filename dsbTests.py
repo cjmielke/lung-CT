@@ -11,11 +11,17 @@ import json
 import pandas, tables
 import itertools
 
-from generators import getImage, prepCube
+from generators import prepCube
 
 DATADIR = '/data/datasets/lung/resampled_order1/'
 tsvFile = DATADIR+'resampledImages.tsv'
 arrayFile = DATADIR+'resampled.h5'
+
+arrayFile = DATADIR+'segmented.h5'
+
+
+
+
 
 #imagesDF = pandas.read_csv(DATADIR + 'resampledImages.tsv', sep='\t')
 
@@ -35,12 +41,14 @@ def makeBatches(iterable, n=1):
 	l = len(iterable)
 	for i in range(0, l, n):
 		batch = iterable[i: min(i+n, l)]
+		assert len(batch)
 		batch = numpy.asarray(batch)
 		yield batch
 
 
+
 # generator for image cubes, which might make batching easier to implement
-def getImageCubes(image, cubeSize):
+def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True):
 
 	# loop over the image, extracting cubes and applying model
 	dim = numpy.asarray(image.shape)
@@ -50,6 +58,8 @@ def getImageCubes(image, cubeSize):
 	# print 'Number of chunks in each direction: ', nChunks
 
 	positions = [p for p in itertools.product(*map(xrange, nChunks))]
+
+	#if filterBackground: image[image<-1000] = -1000			# dont let weird background values bias things
 
 
 	cubes = []
@@ -62,16 +72,22 @@ def getImageCubes(image, cubeSize):
 		cube = image[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
 		assert cube.shape == (cubeSize, cubeSize, cubeSize)
 
-		if cube.mean() < -1000: continue
+		if filterBackground:
+			if cube.mean() <= -1000: continue
 
 		# apply same normalization as in training
 		cube = prepCube(cube, augment=False)
-		cube = numpy.expand_dims(cube, axis=3)
+
+		if expandChannelDim: cube = numpy.expand_dims(cube, axis=3)
 
 		cubes.append(cube)
 		indexPosL.append(indexPos)
 
+	print 'Rejected %d cubes ' % (len(positions) - len(cubes))
+	#assert len(cubes), 'Damn, no cubes. Image stats: %s %s %s ' % (image.min(), image.mean(), image.max())
+	#assert len(indexPosL)
 	return cubes, indexPosL
+
 
 
 
@@ -83,27 +99,25 @@ def makeTheCall(image, model, cubeSize):
 	:return: probability
 	'''
 
-	noduleScores = []
-
-
 	batchSize = 128
 
-	cubes, _ = getImageCubes(image, cubeSize)
+	cubes, _ = getImageCubes(image, cubeSize, filterBackground=True)
+	print 'got %s cubes' % len(cubes)
 	gen = makeBatches(cubes, batchSize)
 
 	nBatches = len(cubes)/batchSize
 	#gen = generateImageCubeBatches(image, positions, cubeSize, batchSize=batchSize)
-	predictions = model.predict_generator(gen, nBatches,
-										  max_q_size=4,
-										  workers=4,
-										  pickle_safe=True,
-										  verbose=1)
+	predictions = model.predict_generator(gen, nBatches, pickle_safe=True, verbose=1,
+										  max_q_size=1, workers=1 )
 
 	isNodule, diam, decodedImg = predictions
-	noduleScores.append(isNodule)
+	print isNodule.min(), isNodule.mean(), isNodule.max()
+	print diam.min(), diam.mean(), diam.max()
+	noduleScores = isNodule
 
-	noduleScores = numpy.asarray(noduleScores)
-	print 'Nodule scores : ', len(noduleScores), noduleScores.min(), noduleScores.mean(), noduleScores.max()
+	#noduleScores = numpy.asarray(noduleScores)
+	print 'Nodule scores : ', noduleScores.shape, noduleScores.min(), noduleScores.mean(), noduleScores.max()
+	print 'Image stats : ', image.min(), image.mean(), image.max()
 
 	return noduleScores
 
@@ -222,15 +236,18 @@ if __name__ == '__main__':
 	from gradCam import grad_cam, buildGradientFunction
 	gradient_function = buildGradientFunction(model)
 
+
+
+
 	DB = tables.open_file(arrayFile, mode='r')
 	array = DB.root.resampled
 
 
 	DF = pandas.read_csv(tsvFile, sep='\t')
-	DF = DF.sample(frac=1)
+	#DF = DF.sample(frac=1)
 	DF = DF[DF.cancer != -1]  # remove images from the submission set
 
-	DF = DF.head(10)
+	DF = DF.head(1)
 
 	testY = []
 	y_score = []
@@ -238,9 +255,14 @@ if __name__ == '__main__':
 	for index, row in DF.iterrows():
 		cancer = row['cancer']
 		image, imgNum = getImage(array, row)
+
+		from utils import boundingBox, getImage
+
+		crop = boundingBox(image)
+
 		print image.shape
 
-		cam = grad_cam(image, gradient_function)
+		#cam = grad_cam(image, gradient_function)
 
 
 		noduleScores = makeTheCall(image, model, cubeSize)
@@ -262,7 +284,7 @@ if __name__ == '__main__':
 	auc = integrate.trapz(tpr, fpr)
 
 
-
+	print 'AUC: ', auc
 
 
 

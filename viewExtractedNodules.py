@@ -114,7 +114,8 @@ for index, pos in enumerate(itertools.product(*map(xrange, nChunks))):
 
 	print pos
 
-	cube = cubes[index+2]
+	cube = cubes[index+5]
+
 	from generators import augmentCube
 	cube = augmentCube(cube)
 	labels, seg = segmentNodule(cube, threshold=-600)
@@ -152,7 +153,7 @@ def viewImgMaya(arr):
 	#mlab.pipeline.iso_surface(src, name='bone', contours=[500, 1200], opacity=1.0, color=(1, 1, 1))
 	#mlab.pipeline.iso_surface(src, name='lung', contours=[-700, -600], opacity=0.3)
 	# mlab.pipeline.iso_surface(src, name='fat', contours=[-100, -50], opacity=0.3, color=(1,0.5,0))
-	# mlab.pipeline.iso_surface(src, name='other', contours=[50, 300], opacity=0.7, color=(0,1.0,0))
+	mlab.pipeline.iso_surface(src, opacity=0.7)
 	mlab.show(stop=False)
 	mlab.show_pipeline(engine=None, rich_view=True)
 
@@ -162,10 +163,8 @@ def viewImgMaya(arr):
 # mlab.pipeline.iso_surface(src, contours=[s.max()-0.1*s.ptp(), ],)
 
 
+#viewNodule(arr)
 
-
-viewNodule(arr)
-
-
+numpy.save('nodules.npy', arr)
 
 

@@ -1,6 +1,11 @@
+import gc
+import os
 import threading
 
 import numpy
+import pandas
+import tables
+from keras import backend as K
 from scipy import ndimage
 
 
@@ -27,6 +32,35 @@ def threaded(fn):
 		thread.start()
 		return thread
 	return wrapper
+
+
+
+
+
+def boundingBox(img):
+	imgMin = img.min()
+	img = img - imgMin
+	assert img.min() == 0.0, 'Image min should be %s but is %s' % (imgMin, img.min())
+
+	rows = np.any(img, axis=1)
+	cols = np.any(img, axis=0)
+	depth = np.any(img, axis=2)
+	rmin, rmax = np.where(rows)[0][[0, -1]]
+	cmin, cmax = np.where(cols)[0][[0, -1]]
+	dmin, dmax = np.where(depth)[0][[0, -1]]
+
+	#return rmin, rmax, cmin, cmax
+
+	img = img + imgMin
+	assert img.min() == imgMin
+
+	crop = img[rmin: rmax, cmin: cmax, dmin: dmax]
+
+
+	print 'original/cropped sizes : %s / %s ' % (img.shape, crop.shape)
+	return crop
+
+
 
 
 
@@ -158,3 +192,47 @@ def resample(image, spacing, new_spacing=[3,3,3], order=1):
 	image = ndimage.interpolation.zoom(image, real_resize_factor, mode='nearest', order=order)
 
 	return image, new_spacing
+
+
+class ImageArray():
+
+	def __init__(self, arrayFile, leafName ='resampled'):
+		'''
+		Utility function to open pytables arrays containing images and their corresponding pandas dataframes
+		:param arrayFile: path to a pytables array - this function will find a tsv file with the same name
+		:param leafName: the leaf name in the pytables root
+		:return: (pytables_array, pandas_dataframe) 
+		'''
+
+		path, f = os.path.split(arrayFile)
+		print path
+		fileName, ext = os.path.splitext(f)
+		assert ext=='.h5'
+		print path, fileName
+
+		tsvFile = os.path.join(path, fileName) + '.tsv'
+		self.DF = pandas.read_csv(tsvFile, sep='\t')
+
+		self.DB = tables.open_file(arrayFile, mode='r')
+		self.array = self.DB.root.__getattr__(leafName)
+
+		assert len(self.DF) == len(self.array)
+
+		self.nImages = len(self.DF)
+
+
+def getImage(imageArray, row, convertType=True):
+	imageNum = row['imgNum']
+	image = imageArray[int(imageNum)]
+
+	if convertType:
+		if image.dtype != K.floatx(): image = image.astype(K.floatx())
+
+	Z, Y, X = row[['shapeZ', 'shapeY', 'shapeX']].as_matrix()
+	#print int(Z), Y, X
+	image = image[:int(Z), :int(Y), :int(X)]
+
+	#print image.min(), image.mean(), image.max()
+	#print normImg.min(), normImg.mean(), normImg.max()
+	gc.collect()
+	return image, imageNum

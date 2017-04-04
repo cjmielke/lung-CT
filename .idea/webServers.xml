@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="40d75e40-c900-4e03-802f-a432cb2b66dc" name="Cortex" url="http://localhost">
+        <fileTransfer host="localhost" port="2223" privateKey="$USER_HOME$/.ssh/id_rsa" rootFolder="/home/cosmo" accessType="SFTP" keyPair="true">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="2223" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

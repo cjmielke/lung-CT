@@ -7,7 +7,7 @@ from skimage import measure
 
 from viz import showHist, mayaPlot
 
-from utils import resample
+from utils import resample, getImage
 
 import tables, pandas
 
@@ -29,7 +29,6 @@ DF = DF.sample(frac=1)
 
 row = DF.iloc[0]
 
-from dsbTests import getImage
 image, imgNum = getImage(array, row)
 
 showHist(image)

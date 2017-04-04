@@ -1,19 +1,14 @@
 import itertools
-import threading
 from random import shuffle
-import gc
+
 import numpy
 import pandas
 import tables
-from keras import backend as K
-#from sklearn.preprocessing import normalize
-from utils import normalizeStd, normalizeRange
-
-from utils import normalizeStd, findNodules
-
-
-from scipy.ndimage import affine_transform, rotate
 from numpy.random import random
+
+# from sklearn.preprocessing import normalize
+from utils import normalizeRange, getImage
+from utils import normalizeStd, findNodules
 
 BATCH_SIZE = 32
 VALIDATION_SIZE = 100
@@ -21,29 +16,7 @@ VALIDATION_SIZE = 100
 VALIDATION_SPLIT = 0.2
 
 
-from scipy.ndimage.interpolation import rotate, affine_transform, geometric_transform
-from keras.preprocessing.image import ImageDataGenerator
-
-
-
-
-
-def getImage(imageArray, row, convertType=True):
-	imageNum = row['imgNum']
-	image = imageArray[int(imageNum)]
-
-	if convertType:
-		if image.dtype != K.floatx(): image = image.astype(K.floatx())
-
-	Z, Y, X = row[['shapeZ', 'shapeY', 'shapeX']].as_matrix()
-	#print int(Z), Y, X
-	image = image[:int(Z), :int(Y), :int(X)]
-
-	#print image.min(), image.mean(), image.max()
-	#print normImg.min(), normImg.mean(), normImg.max()
-	gc.collect()
-	return image, imageNum
-
+from scipy.ndimage.interpolation import rotate, affine_transform
 
 
 def getNoduleDiameter(row):
@@ -293,6 +266,11 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 					#print cube.mean()
 					#print 'empty cube'
 					continue
+
+				# we need more cubes with bones present to really train the algo
+				# not to just get lazy and bias bright regions!
+				# 60 percent of the time, ensure we're dealing with a sufficiently bright cube
+				if random() > 0.4 and cube.mean() < 300: continue
 
 				cube = prepCube(cube)
 

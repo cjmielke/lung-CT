@@ -54,7 +54,7 @@ def makeTheCall(image, model, cubeSize):
 	'''
 
 	batchSize = 128
-	print 'imMean: ', image.mean()
+	print 'img: ', image.mean(), image.min(), image.max()
 	cubes, _ = getImageCubes(image, cubeSize, filterBackground=True)
 	print 'got %s cubes' % len(cubes)
 	gen = makeBatches(cubes, batchSize)

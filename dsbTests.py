@@ -209,7 +209,7 @@ class SparseImageSource():
 			#print image.shape, z, y, x
 			cubeNum = cubeRow['cubeNum']
 			cube = self.array[cubeNum]
-			print 'cube stats: ', cube.min(), cube.mean(), cube.max()
+			#print 'cube stats: ', cube.min(), cube.mean(), cube.max()
 			image[z:z+cs, y:y+cs, x:x+cs, :] = cube 
 
 		print image.dtype
@@ -246,6 +246,8 @@ if __name__ == '__main__':
 
 		# predictions based on images
 		image, imgNum = getImage(array, row)
+		print image.shape
+		crash
 		noduleScores = predictImage(image, model, cubeSize)
 
 		# predictions based on sparse images

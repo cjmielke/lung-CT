@@ -246,12 +246,12 @@ if __name__ == '__main__':
 
 		# predictions based on images
 		image, imgNum = getImage(array, row)
-		print image.shape
-		crash
 		noduleScores = predictImage(image, model, cubeSize)
 
 		# predictions based on sparse images
 		image = sparseImages.getImageFromSparse(row)
+		print image.shape
+		crash
 		noduleScores = predictImage(image, model, cubeSize)
 
 		# predictions based on cube list

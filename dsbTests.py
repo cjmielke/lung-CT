@@ -192,8 +192,7 @@ class SparseImageSource():
 
 		imageCubes = self.DF[self.DF.imgNum==row['imgNum']]
 		cs = self.cubeSize
-		for cubeRow in imageCubes.iterrows():
-			print cubeRow[['realZ', 'realY', 'realX']].as_matrix()
+		for _, cubeRow in imageCubes.iterrows():
 			z, y, z = cubeRow[['realZ', 'realY', 'realX']].as_matrix()
 			print z, y, x
 			cubeNum = cubeRow['cubeNum']

@@ -60,7 +60,7 @@ def predictImage(image, model, cubeSize):
 	'''
 
 
-	print 'img: ', describe(image)
+	print 'img: ', describe(image.flatten())
 	cubes, _ = getImageCubes(image, cubeSize, filterBackground=True, prep=True)
 
 	predictions = predictAllCubes(model, cubes)

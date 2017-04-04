@@ -193,8 +193,8 @@ class SparseImageSource():
 		imageCubes = self.DF[self.DF.imgNum==row['imgNum']]
 		cs = self.cubeSize
 		for cubeRow in imageCubes.iterrows():
-			z, y, z = row[['realZ', 'realY', 'realX']].as_matrix()
-			cubeNum = row['cubeNum']
+			z, y, z = cubeRow[['realZ', 'realY', 'realX']].as_matrix()
+			cubeNum = cubeRow['cubeNum']
 			image[z:z+cs, y:y+cs, x:x+cs] = self.array[cubeNum] 
 
 		if convertType:

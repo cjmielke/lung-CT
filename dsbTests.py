@@ -4,6 +4,7 @@ import numpy
 import pandas
 from keras.callbacks import Callback
 from scipy import integrate
+from scipy.stats import describe
 from sklearn.metrics import roc_curve
 
 from gradCam import buildGradientFunction
@@ -59,7 +60,7 @@ def predictImage(image, model, cubeSize):
 	'''
 
 
-	print 'img: ', image.mean(), image.min(), image.max()
+	print 'img: ', describe(image)
 	cubes, _ = getImageCubes(image, cubeSize, filterBackground=True, prep=True)
 
 	predictions = predictAllCubes(model, cubes)

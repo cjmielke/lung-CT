@@ -99,7 +99,7 @@ if __name__ == '__main__':
 		image, imgNum = getImage(array, row)
 		imgShape = numpy.asarray(image.shape)
 
-		print 'image', describe(image.flatten())
+		describe(image.flatten())
 
 		from scipy.ndimage import zoom
 		smallImg = zoom(image, 0.25)

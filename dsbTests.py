@@ -221,11 +221,14 @@ if __name__ == '__main__':
 	DF = DF[DF.cancer != -1]  # remove images from the submission set
 	DF = DF.head(10)
 
-	testY, y_score = [], []
+	sparseArray = '/data/datasets/lung/resampled_order1/segmentedNonzero.h5'
+	sparseImages = SparseImageSource(sparseArray)
 
+	testY, y_score = [], []
 	for index, row in DF.iterrows():
 		cancer = row['cancer']
-		image, imgNum = getImage(array, row)
+		#image, imgNum = getImage(array, row)
+		image = sparseImages.getImageFromSparse(row)
 
 		print image.shape
 

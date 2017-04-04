@@ -2,15 +2,9 @@
 
 import os
 import sys
-from cv2 import imshow, waitKey
-
-import numpy
-import pandas
 import tables
 
-from utils import normalizeRange
-from viz import grey2color, plot_nodule, mayaPlot
-import time
+import pandas
 from mayavi import mlab
 
 dataset_file = sys.argv[1]

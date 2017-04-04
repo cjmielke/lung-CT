@@ -1,17 +1,10 @@
-import pandas
 import tables
-from keras.callbacks import Callback
-from pkg_resources import parse_version
-from sklearn.metrics import roc_auc_score, roc_curve
-from scipy import integrate
-from keras import backend as K
+
 import numpy as np
-import os
-import json
-
-
-
-
+import pandas
+from keras.callbacks import Callback
+from scipy import integrate
+from sklearn.metrics import roc_curve
 
 DATADIR = '/data/datasets/lung/resampled_order1/'
 

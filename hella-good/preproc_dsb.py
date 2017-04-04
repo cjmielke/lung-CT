@@ -1,20 +1,13 @@
 import os
-
-import dicom
-import matplotlib.pyplot as plt
-import numpy as np # linear algebra
-import pandas
-from skimage import measure
-from tqdm import tqdm
-from viz import showHist, mayaPlot
+import tables
 from random import shuffle
 
+import dicom
+import numpy as np # linear algebra
+import pandas
+from tqdm import tqdm
+
 from utils import resample
-import tables
-
-from collections import Counter
-
-
 
 # change later
 #INPUT_FOLDER = '/data/datasets/lung/sample_images/'

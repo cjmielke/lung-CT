@@ -1,4 +1,3 @@
-import itertools
 import tables
 from random import shuffle
 
@@ -6,7 +5,7 @@ import numpy
 import pandas
 from numpy.random import random
 
-from utils import getImage, prepCube
+from utils import getImage, prepCube, getImageCubes
 from utils import normalizeStd, findNodules
 
 BATCH_SIZE = 32
@@ -198,47 +197,23 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 
 			image, imageNum = getImage(imageArray, row)
 
-			nodules = noduleDF[noduleDF.imgNum==imageNum]
-			candidates = candidatesDF[candidatesDF.imgNum==imageNum]
+			imgNodules = noduleDF[noduleDF.imgNum==imageNum]
+			imgCandidates = candidatesDF[candidatesDF.imgNum==imageNum]
 
 			#if autoencoder: image = numpy.expand_dims(image, axis=2)
 
-			dim = numpy.asarray(image.shape)
-			print 'dimension of image: ', dim
 
-			nChunks = dim / cubeSize
-			#print 'Number of chunks in each direction: ', nChunks
+			cubes, positions = getImageCubes(image, cubeSize, prep=True)
+			for cube, pos in zip(cubes, positions):
+				realPos = pos*cubeSize
+				z, y, x = realPos
 
-			positions = [p for p in itertools.product(*map(xrange, nChunks))][:atMost]
-			shuffle(positions)		# hop around randomly in lung
-
-			for pos in positions:
-				pos = numpy.asarray(pos)
-				pos *= cubeSize
-				z, y, x = pos
-
-				cube = image[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
-				assert cube.shape == (cubeSize, cubeSize, cubeSize)
-
-				if cube.mean() < -3000:
-					#print cube.mean()
-					#print 'empty cube'
-					continue
-
-				# we need more cubes with bones present to really train the algo
-				# not to just get lazy and bias bright regions!
-				# 60 percent of the time, ensure we're dealing with a sufficiently bright cube
 				if random() > 0.4 and cube.mean() < 300: continue
 
-				cube = prepCube(cube)
-
-				#cube = normImg[z:z + cubeSize, y:y + cubeSize, x:x + cubeSize]
-				#print cube.min(), cube.mean(), cube.max()
-
 				# is there a nodule or candidates in this cube?
-				nodulesInCube = findNodules(nodules, x, y, z, cubeSize)
+				nodulesInCube = findNodules(imgNodules, x, y, z, cubeSize)
 				numNodules = len(nodulesInCube)
-				candidatesInCube = findNodules(candidates, x, y, z, cubeSize)
+				candidatesInCube = findNodules(imgCandidates, x, y, z, cubeSize)
 				numCandidates = len(candidatesInCube)
 
 				if (numNodules or numCandidates): print 'Candidates: %s Nodules: %s' % (numCandidates, numNodules)

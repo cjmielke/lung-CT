@@ -6,8 +6,10 @@ Extract cubes from dataset, creating a new pytables library to pull from
 
 
 #np.random.seed(31337)
-import numpy
 import tables
+
+import numpy
+
 tables.set_blosc_max_threads(4)
 from keras import backend as K
 K.set_floatx('float32')
@@ -26,7 +28,7 @@ DATASET = DATADIR+'resampled.h5'
 
 import pandas
 
-from utils import LeafLock, getImage
+from utils import getImage, convertColsToInt
 
 from tqdm import tqdm
 
@@ -154,10 +156,7 @@ if __name__ == '__main__':
 
 	cubes.append(L)
 
-	cubeDF.imgNum = cubeDF.imgNum.astype('int')
-	cubeDF.shapeX = cubeDF.shapeX.astype('int')
-	cubeDF.shapeY = cubeDF.shapeY.astype('int')
-	cubeDF.shapeZ = cubeDF.shapeZ.astype('int')
+	cubeDF = convertColsToInt(cubeDF, ['imgNum', 'shapeX', 'shapeY', 'shapeZ'])
 	cubeDF.to_csv(outDF, sep='\t', index_label='noduleNum')
 
 	DB.close()

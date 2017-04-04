@@ -1,17 +1,15 @@
 #!/usr/bin/env python2.7
 
 
+import tables
+
 import cv2
 import numpy
 import pandas
-import sys
-import tables
+from joblib import Parallel, delayed
 from tqdm import trange
 
-from dsbTests import arrayFile, tsvFile
-from utils import getImage
-
-from joblib import Parallel, delayed
+from dsbTests import tsvFile
 
 print(cv2.__version__)
 

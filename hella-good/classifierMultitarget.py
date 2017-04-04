@@ -6,14 +6,12 @@ import tables
 from keras import backend as K
 from keras.callbacks import TensorBoard
 
-from callbacks import ComputeAUC, MyTensorBoard2#, ComputeBothAUC
 from generators import imageCubeGen, Batcher, CubeGen
 
 K.set_floatx('float32')
 K.set_image_dim_ordering('tf')
 from keras.optimizers import SGD
 from callbacks import fgLogger
-from generators import candidateGen
 
 DATADIR = '/data/datasets/luna/resampled_order1/'
 DATASET = DATADIR+'resampled.h5'

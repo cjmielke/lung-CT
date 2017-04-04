@@ -1,8 +1,9 @@
+from matplotlib import cm
 from matplotlib import pyplot as plt
 from mayavi import mlab
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from skimage import measure
-from matplotlib import cm
+
 
 def showHist(img):
 	plt.hist(img.flatten(), bins=80, color='c')

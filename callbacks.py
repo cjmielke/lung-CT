@@ -1,11 +1,13 @@
-from keras.callbacks import Callback
-from pkg_resources import parse_version
-from sklearn.metrics import roc_auc_score, roc_curve
-from scipy import integrate
-from keras import backend as K
-import numpy as np
-import os
 import json
+import os
+from pkg_resources import parse_version
+
+import numpy as np
+from keras import backend as K
+from keras.callbacks import Callback
+from scipy import integrate
+from sklearn.metrics import roc_auc_score, roc_curve
+
 
 def confusionFIXME(y_true, y_pred):
 	y_pred_pos = K.round(K.clip(y_pred, 0, 1))
@@ -276,8 +278,7 @@ class MyTensorBoard2(Callback):
 		self.otherCallbacks = otherCallbacks
 
 		import tensorflow as tf
-		import keras.backend.tensorflow_backend as KTF
-	
+
 		if parse_version(tf.__version__) >= parse_version('0.12.0'):
 			self.merged = tf.summary.merge_all()
 		else:

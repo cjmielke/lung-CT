@@ -1,13 +1,10 @@
+import collections
+import threading
+from Queue import Queue
 from random import shuffle
 
 import numpy
-import sys
 from keras import backend as K
-from keras.applications.vgg16 import preprocess_input
-import collections
-import threading
-
-from Queue import Queue
 
 
 '''
@@ -22,7 +19,6 @@ VALIDATION_SIZE = 100
 VALIDATION_SPLIT = 0.2
 
 from matplotlib import cm
-from sklearn.preprocessing import normalize
 
 
 def myChannelMean(x, dim_ordering='default'):

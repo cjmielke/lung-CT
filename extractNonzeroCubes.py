@@ -1,11 +1,11 @@
 #!/usr/bin/env python2.7
 
-import pandas
 import tables
-from tqdm import trange, tqdm
 
-from dsbTests import tsvFile, getImageCubes
-from utils import ImageArray, getImage, getImageCubes
+import pandas
+from tqdm import trange
+
+from utils import ImageArray, getImage, getImageCubes, convertColsToInt
 
 
 def extractNonzero(arrayFile, arrayOut, cubeSize=32):
@@ -35,7 +35,7 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 		print image.shape
 
 
-		cubes, positions = getImageCubes(image, cubeSize, prep=False)
+		cubes, positions = getImageCubes(image, cubeSize, prep=False)		# extract raw cubes from image
 		print 'Got %d cubes' % len(cubes)
 
 		for cube, pos in zip(cubes, positions):
@@ -64,13 +64,17 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 	assert len(cubeDF) == len(cubesArray)
 
 
-	cubeDF.imgNum = cubeDF.imgNum.astype('int')
-	cubeDF.posZ = cubeDF.posZ.astype('int')
-	cubeDF.posY = cubeDF.posY.astype('int')
-	cubeDF.posX = cubeDF.posX.astype('int')
-	cubeDF.realZ = cubeDF.realZ.astype('int')
-	cubeDF.realY = cubeDF.realY.astype('int')
-	cubeDF.realX = cubeDF.realX.astype('int')
+
+
+	cubeDF = convertColsToInt(cubeDF, cubeDF.columns)
+
+	#cubeDF.imgNum = cubeDF.imgNum.astype('int')
+	#cubeDF.posZ = cubeDF.posZ.astype('int')
+	#cubeDF.posY = cubeDF.posY.astype('int')
+	#cubeDF.posX = cubeDF.posX.astype('int')
+	#cubeDF.realZ = cubeDF.realZ.astype('int')
+	#cubeDF.realY = cubeDF.realY.astype('int')
+	#cubeDF.realX = cubeDF.realX.astype('int')
 
 	cubeDF.to_csv(tsvOut, sep='\t', index_label='cubeNum')
 

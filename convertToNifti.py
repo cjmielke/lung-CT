@@ -1,9 +1,11 @@
+import tables
 import nibabel
 import numpy
 import pandas
-import tables
 from scipy.ndimage import zoom
 from utils import getImage
+
+
 
 INPUT_FOLDER = '/data/datasets/lung/sample_images/'
 

@@ -1,14 +1,13 @@
-import itertools
-import threading
-from random import shuffle
 import gc
+import itertools
+import tables
+from random import shuffle
+
 import numpy
 import pandas
-import tables
 from keras import backend as K
-#from sklearn.preprocessing import normalize
-from utils import normalizeStd, normalizeRange
 
+from utils import normalizeRange
 from utils import normalizeStd, findNodules
 
 BATCH_SIZE = 32

@@ -1,17 +1,18 @@
 
 # Settings
-import os, sys
+import sys
+import tables
 from glob import glob
+from random import shuffle
 
 import SimpleITK as sitk
 import numpy as np
 import pandas
 import pandas as pd
 from tqdm import tqdm
-from utils import make_mask, resample
+
+from utils import resample
 from utils import world2voxel
-import tables
-from random import shuffle
 
 LUNA_DATA_PATH = "/data/datasets/luna/"
 luna_subset_path = LUNA_DATA_PATH + "subset0/"

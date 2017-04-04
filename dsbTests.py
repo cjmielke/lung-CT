@@ -1,11 +1,12 @@
+import tables
+
 import numpy
 import pandas
-import tables
 from keras.callbacks import Callback
 from scipy import integrate
 from sklearn.metrics import roc_curve
-from gradCam import buildGradientFunction
 
+from gradCam import buildGradientFunction
 from utils import getImage, getImageCubes, ImageArray
 
 DATADIR = '/data/datasets/lung/resampled_order1/'
@@ -25,13 +26,6 @@ arrayFile = DATADIR+'segmented.h5'
 
 
 
-
-
-
-
-
-
-
 def makeBatches(iterable, n=1):
 	l = len(iterable)
 	for i in range(0, l, n):
@@ -43,19 +37,7 @@ def makeBatches(iterable, n=1):
 
 
 
-
-
-def makeTheCall(image, model, cubeSize):
-	'''
-	Classify an image
-	:param lungImg: the image of the lung from the DSB data set 
-	:param model: the current nodule detection model
-	:return: probability
-	'''
-
-	batchSize = 128
-	print 'img: ', image.mean(), image.min(), image.max()
-	cubes, _ = getImageCubes(image, cubeSize, filterBackground=True)
+def predictAllCubes(model, cubes, batchSize = 128):
 	print 'got %s cubes' % len(cubes)
 	gen = makeBatches(cubes, batchSize)
 
@@ -63,6 +45,24 @@ def makeTheCall(image, model, cubeSize):
 	#gen = generateImageCubeBatches(image, positions, cubeSize, batchSize=batchSize)
 	predictions = model.predict_generator(gen, nBatches, pickle_safe=True, verbose=1,
 										  max_q_size=1, workers=1 )
+
+	return predictions
+
+
+
+def predictImage(image, model, cubeSize):
+	'''
+	Classify an image
+	:param lungImg: the image of the lung from the DSB data set 
+	:param model: the current nodule detection model
+	:return: probability
+	'''
+
+
+	print 'img: ', image.mean(), image.min(), image.max()
+	cubes, _ = getImageCubes(image, cubeSize, filterBackground=True, prep=True)
+
+	predictions = predictAllCubes(model, cubes)
 
 	isNodule, diam, decodedImg = predictions
 	print isNodule.min(), isNodule.mean(), isNodule.max()
@@ -134,7 +134,7 @@ class testDSBdata(Callback):
 
 			cancer, image = self.imgGen.next()
 
-			noduleScores = makeTheCall(image, self.model, cubeSize)
+			noduleScores = predictImage(image, self.model, cubeSize)
 			prob = noduleScores.max()
 			print 'cancer/probability :', cancer, prob
 
@@ -186,6 +186,15 @@ class SparseImageSource():
 		self.array = sparseImages.array
 		self.cubeSize = self.array[0].shape[0]
 
+	def getImageCubes(self, row):
+		imageCubes = self.DF[self.DF.imgNum==row['imgNum']]
+		cubes = []
+		for _, cubeRow in imageCubes.iterrows():
+			cubeNum = cubeRow['cubeNum']
+			cube = self.array[cubeNum]
+			cubes.append(cube)
+		return cubes
+
 	def getImageFromSparse(self, row, convertType=True):
 		#print row
 		Z, Y, X = row.shapeZ, row.shapeY, row.shapeX
@@ -209,6 +218,8 @@ class SparseImageSource():
 		return image
 
 
+
+
 if __name__ == '__main__':
 	import sys
 	from keras.models import load_model
@@ -226,19 +237,30 @@ if __name__ == '__main__':
 	DF = DF[DF.cancer != -1]  # remove images from the submission set
 	DF = DF.head(10)
 
-	sparseArray = '/data/datasets/lung/resampled_order1/segmentedNonzero.h5'
-	sparseImages = SparseImageSource(sparseArray)
+	sparseImages = SparseImageSource('/data/datasets/lung/resampled_order1/segmentedNonzero.h5')
 
 	testY, y_score = [], []
 	for index, row in DF.iterrows():
 		cancer = row['cancer']
-		#image, imgNum = getImage(array, row)
-		image = sparseImages.getImageFromSparse(row)
 
-		print image.shape
+		# predictions based on images
+		image, imgNum = getImage(array, row)
+		noduleScores = predictImage(image, model, cubeSize)
+
+		# predictions based on sparse images
+		image = sparseImages.getImageFromSparse(row)
+		noduleScores = predictImage(image, model, cubeSize)
+
+		# predictions based on cube list
+		cubes = sparseImages.getImageCubes(row)
+		predictions = predictAllCubes(model, cubes)
+		noduleScores, diam, decodedImg = predictions
+
+
 
 		#cam = grad_cam(image, gradient_function)
-		noduleScores = makeTheCall(image, model, cubeSize)
+
+
 		prob = noduleScores.max()
 		print 'cancer/probability :', cancer, prob
 

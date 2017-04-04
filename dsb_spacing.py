@@ -1,18 +1,8 @@
 import os
 
-import dicom
-import matplotlib.pyplot as plt
 import numpy as np # linear algebra
 import pandas
-from skimage import measure
 from tqdm import tqdm
-
-from viz import showHist, mayaPlot
-
-from utils import resample
-import tables
-
-
 
 # change later
 #INPUT_FOLDER = '/data/datasets/lung/sample_images/'

@@ -1,11 +1,12 @@
 import gc
 import itertools
 import os
+import tables
 import threading
 
 import numpy
+import numpy as np
 import pandas
-import tables
 from keras import backend as K
 from numpy.random import random
 from scipy import ndimage
@@ -26,15 +27,6 @@ class LeafLock():
 			return r
 
 
-
-
-def threaded(fn):
-	def wrapper(*args, **kwargs):
-		thread = threading.Thread(target=fn, args=args, kwargs=kwargs)
-		thread.setDaemon(True)
-		thread.start()
-		return thread
-	return wrapper
 
 
 
@@ -116,14 +108,6 @@ def matrix2int16(matrix):
 	return(np.array(np.rint( (matrix-m_min)/float(m_max-m_min) * 65535.0),dtype=np.uint16))
 
 
-## Plot volume in 2D
-
-import numpy as np
-
-# Plot one example
-#img_crop = np.load('25.npy')
-#plot_nodule(img_crop)
-
 
 
 '''
@@ -148,17 +132,14 @@ def voxel2world(voxel_coordinates, origin, spacing):
 
 
 
+
+
 def normalizeStd(arr):
 	norm1 = arr / numpy.linalg.norm(arr)
 	return norm1
 
 
-
-
-
 # normalize methods found in the preprocessing tutorial
-
-
 def normalizeRange(image, MIN_BOUND=-1000.0, MAX_BOUND=400.0):
 	image = (image - MIN_BOUND) / (MAX_BOUND - MIN_BOUND)
 	image[image>1] = 1.
@@ -167,9 +148,8 @@ def normalizeRange(image, MIN_BOUND=-1000.0, MAX_BOUND=400.0):
 
 
 
-PIXEL_MEAN = 0.25
-
 def zero_center(image):
+	PIXEL_MEAN = 0.25
 	image = image - PIXEL_MEAN
 	return image
 
@@ -178,6 +158,9 @@ def zero_center(image):
 
 
 def findNodules(dataframe, x, y, z, cubeSize):
+	"""
+	Find nodules in a dataframe based on voxel coordinates
+	"""
 	nodulesInCube = dataframe[
 		(dataframe.voxelZ > z) & (dataframe.voxelZ < z + cubeSize) &
 		(dataframe.voxelY > y) & (dataframe.voxelY < y + cubeSize) &
@@ -200,12 +183,12 @@ def resample(image, spacing, new_spacing=[3,3,3], order=1):
 class ImageArray():
 
 	def __init__(self, arrayFile, tsvFile=None, leafName ='resampled'):
-		'''
+		"""
 		Utility function to open pytables arrays containing images and their corresponding pandas dataframes
 		:param arrayFile: path to a pytables array - this function will find a tsv file with the same name
 		:param leafName: the leaf name in the pytables root
 		:return: (pytables_array, pandas_dataframe) 
-		'''
+		"""
 
 		path, f = os.path.split(arrayFile)
 		print path
@@ -241,7 +224,18 @@ def getImage(imageArray, row, convertType=True):
 	return image, imageNum
 
 
-def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True, prep=True):
+
+
+
+
+
+
+
+
+
+def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True, prep=None):
+
+	assert prep is not None, 'You must explicitly tell me if I should prep cubes for the model, or if these are RAW'
 
 	# loop over the image, extracting cubes and applying model
 	dim = numpy.asarray(image.shape)
@@ -311,3 +305,9 @@ def prepCube(cube, augment=True):
 
 	if augment: cube = augmentCube(cube)
 	return cube
+
+
+def convertColsToInt(DF, columns):
+	for col in columns:
+		DF[col] = DF[col].astype('int')
+		return DF

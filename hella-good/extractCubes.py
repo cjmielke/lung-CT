@@ -6,8 +6,10 @@ Extract cubes from dataset, creating a new pytables library to pull from
 
 
 #np.random.seed(31337)
-import numpy
 import tables
+
+import numpy
+
 tables.set_blosc_max_threads(4)
 from keras import backend as K
 K.set_floatx('float32')
@@ -23,8 +25,6 @@ DATASET = SSD_DATADIR + 'resampled.h5'
 
 
 import pandas
-
-from utils import LeafLock
 
 from generators import getImage
 from tqdm import tqdm

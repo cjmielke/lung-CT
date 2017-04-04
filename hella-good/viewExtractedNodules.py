@@ -1,21 +1,12 @@
 #!/usr/bin/env python2.7
 
-import os
+import itertools
 import sys
-from cv2 import imshow, waitKey
-
-import numpy
-import pandas
 import tables
 
-
-from utils import normalizeRange
-from viz import grey2color, plot_nodule, mayaPlot
-import time
+import numpy
 from mayavi import mlab
 from scipy.stats import mode
-
-import itertools
 
 #dataset_file = sys.argv[1]
 #df = pandas.read_csv(dataset_file, sep='\t')

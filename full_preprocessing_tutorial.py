@@ -5,9 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np # linear algebra
 from skimage import measure
 
-from viz import showHist, mayaPlot
-
 from utils import resample
+from viz import showHist, mayaPlot
 
 
 INPUT_FOLDER = '/data/datasets/lung/sample_images/'

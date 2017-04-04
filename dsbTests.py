@@ -187,12 +187,14 @@ class SparseImageSource():
 		self.cubeSize = self.array[0].shape[0]
 
 	def getImageFromSparse(self, row, convertType=True):
+		print row
 		Z, Y, X = row[['shapeZ', 'shapeY', 'shapeX']].as_matrix()
 		image = numpy.zeros((Z, Y, X, 1))
 
 		imageCubes = self.DF[self.DF.imgNum==row['imgNum']]
 		cs = self.cubeSize
 		for _, cubeRow in imageCubes.iterrows():
+			print cubeRow
 			z, y, z = cubeRow[['realZ', 'realY', 'realX']].as_matrix()
 			print z, y, x
 			cubeNum = cubeRow['cubeNum']

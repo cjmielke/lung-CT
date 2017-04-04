@@ -219,7 +219,7 @@ if __name__ == '__main__':
 	array, DF = dsbImages.array, dsbImages.DF
 
 	DF = DF[DF.cancer != -1]  # remove images from the submission set
-	DF = DF.head(1)
+	DF = DF.head(10)
 
 	testY, y_score = [], []
 

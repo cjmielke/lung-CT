@@ -181,7 +181,7 @@ class testDSBdata(Callback):
 
 class SparseImageSource():
 	def __init__(self, arrayFile, tsvFile=None):
-		sparseImages = ImageArray(arrayFile, tsvFile=tsvFile)
+		sparseImages = ImageArray(arrayFile, tsvFile=tsvFile, leafName='cubes')
 		self.DF = sparseImages.DF
 		self.array = sparseImages.array
 		self.cubeSize = self.array[0].shape[0]

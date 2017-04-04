@@ -1,13 +1,12 @@
 import itertools
+import tables
 from random import shuffle
 
 import numpy
 import pandas
-import tables
 from numpy.random import random
 
-# from sklearn.preprocessing import normalize
-from utils import normalizeRange, getImage
+from utils import getImage, prepCube
 from utils import normalizeStd, findNodules
 
 BATCH_SIZE = 32
@@ -16,51 +15,10 @@ VALIDATION_SIZE = 100
 VALIDATION_SPLIT = 0.2
 
 
-from scipy.ndimage.interpolation import rotate, affine_transform
-
-
 def getNoduleDiameter(row):
 	if row is None: return 0.0
 	else: diam = row.get('diameter_mm',0.0)
 	return diam
-
-
-
-def augmentCube(cube):
-
-	affine = numpy.eye(3) + 0.4*(random((3,3))-0.5)
-	#print affine
-
-	#return ebuc
-	cube = rotate(cube, 360*random(), axes=(0,1), reshape=False)
-	cube = rotate(cube, 360*random(), axes=(1,2), reshape=False)
-
-	cube = affine_transform(cube, affine)
-
-	return cube
-
-
-
-
-def prepCube(cube, augment=True):
-	cubeSize = cube.shape[0]
-	#cube = normalizeStd(cube)
-	cube = normalizeRange(cube,MAX_BOUND=500.0)
-	#cube = normalizeRange(cube,MAX_BOUND=1000.0)
-	size = cube.shape[0]
-
-	if cubeSize!=size:
-		p = size-cubeSize
-		p = p/2
-		cube = cube[p:p+cubeSize, p:p+cubeSize, p:p+cubeSize]
-		assert cube.shape == (cubeSize, cubeSize, cubeSize)
-
-	if augment: cube = augmentCube(cube)
-	return cube
-
-
-
-
 
 
 def candidateGen(imageArray, candidatesDF, cubeSize=20, autoencoder=False):

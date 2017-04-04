@@ -7,9 +7,9 @@ import numpy
 import pandas
 import tables
 from keras import backend as K
+from numpy.random import random
 from scipy import ndimage
-
-from generators import prepCube
+from scipy.ndimage import rotate, affine_transform
 
 
 class LeafLock():
@@ -280,3 +280,34 @@ def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True)
 	#assert len(cubes), 'Damn, no cubes. Image stats: %s %s %s ' % (image.min(), image.mean(), image.max())
 	#assert len(indexPosL)
 	return cubes, indexPosL
+
+
+def augmentCube(cube):
+
+	affine = numpy.eye(3) + 0.4*(random((3,3))-0.5)
+	#print affine
+
+	#return ebuc
+	cube = rotate(cube, 360*random(), axes=(0,1), reshape=False)
+	cube = rotate(cube, 360*random(), axes=(1,2), reshape=False)
+
+	cube = affine_transform(cube, affine)
+
+	return cube
+
+
+def prepCube(cube, augment=True):
+	cubeSize = cube.shape[0]
+	#cube = normalizeStd(cube)
+	cube = normalizeRange(cube,MAX_BOUND=500.0)
+	#cube = normalizeRange(cube,MAX_BOUND=1000.0)
+	size = cube.shape[0]
+
+	if cubeSize!=size:
+		p = size-cubeSize
+		p = p/2
+		cube = cube[p:p+cubeSize, p:p+cubeSize, p:p+cubeSize]
+		assert cube.shape == (cubeSize, cubeSize, cubeSize)
+
+	if augment: cube = augmentCube(cube)
+	return cube

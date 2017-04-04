@@ -9,7 +9,7 @@ import pandas
 import tables
 
 
-from utils import normalizeRange
+from utils import normalizeRange, augmentCube
 from viz import grey2color, plot_nodule, mayaPlot
 import time
 from mayavi import mlab

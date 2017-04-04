@@ -88,7 +88,7 @@ if __name__ == '__main__':
 
 
 	DATADIR = '/data/datasets/lung/resampled_order1/'
-	arrayFile = DATADIR + 'segmented_again.h5'
+	arrayFile = DATADIR + 'segmented.h5'
 	arrayOut = DATADIR + 'segmentedNonzero_again.h5'
 
 	extractNonzero(arrayFile, arrayOut)

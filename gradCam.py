@@ -8,7 +8,6 @@ import keras.backend as K
 
 from utils import getImage, getImageCubes
 
-from dsbTests import getImageCubes, makeBatches
 from convertToNifti import vol2Nifti
 
 

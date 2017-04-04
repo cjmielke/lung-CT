@@ -55,7 +55,7 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 			s.name = cubeNum
 			cubeNum += 1
 			cubeDF = cubeDF.append(s)
-			print cube.min(), cube.mean(), cube.max()
+			#print cube.min(), cube.mean(), cube.max()
 			cubesArray.append([cube])
 
 

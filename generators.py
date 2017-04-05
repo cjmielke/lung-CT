@@ -210,7 +210,7 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 				realPos = pos*cubeSize
 				z, y, x = realPos
 
-				if random() > 0.4 and cube.mean() < 300: continue
+				#if random() > 0.4 and cube.mean() < 300: continue			# doesn't  work! its normalized now
 
 				# is there a nodule or candidates in this cube?
 				nodulesInCube = findNodules(imgNodules, x, y, z, cubeSize)

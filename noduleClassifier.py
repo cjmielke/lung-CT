@@ -345,6 +345,9 @@ if __name__ == '__main__':
 		tGen, vGen,
 		trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
 
+	for batch in stratifiedQ.trainGen:
+		print type(batch), len(batch)
+
 
 	#stratifiedQ = Batcher(
 	#	candidateGen.trainGen, candidateGen.valGen,

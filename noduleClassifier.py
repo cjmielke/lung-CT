@@ -327,7 +327,7 @@ if __name__ == '__main__':
 
 	candidateGen = CubeGen(DATADIR + 'candidateCubes.h5', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
 
-	for imgNum, cube, targets in candidateGen.trainGen:
+	for imgNum, cube, targets in candidateGen.valGen:
 		print imgNum
 		print imgNum, cube.mean(), targets['nodule']
 

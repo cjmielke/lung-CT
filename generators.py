@@ -152,8 +152,6 @@ class CubeGen:
 		assert noduleNum < len(self.array)
 		cube = self.array[noduleNum]
 		cube = prepCube(cube)
-		print type(cube)
-		crash
 		#normImg = normalizeStd(image.clip(min=-1000, max=700))
 
 		if self.allNodules: nodule=1.0

@@ -108,7 +108,7 @@ class CubeGen:
 			for _, row in noduleDF.iterrows():
 				noduleNum = int(row['noduleNum'])
 				cube = self.DB.root.cubes[noduleNum]
-				print cube.mean()
+				#print cube.mean()
 				self.array.append(cube)
 
 

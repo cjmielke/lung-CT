@@ -346,6 +346,9 @@ if __name__ == '__main__':
 		trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
 
 	for batch in stratifiedQ.trainGen:
+		arrays, targets = batch
+		for c, t in zip(arrays,targets['nodule']):
+			print c.mean(), t
 		print type(batch), len(batch)
 
 

@@ -223,7 +223,7 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 				#if numCandidates: plot_nodule(cube)
 
 				if len(nodulesInCube):
-					diam = getNoduleDiameter(nodulesInCube[0])
+					diam = getNoduleDiameter(nodulesInCube.iloc[0])
 				else: diam = getNoduleDiameter(None)
 
 				targets = {

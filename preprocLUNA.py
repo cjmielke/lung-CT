@@ -1,7 +1,6 @@
 
 # Settings
 import sys
-import tables
 from glob import glob
 from random import shuffle
 
@@ -9,9 +8,10 @@ import SimpleITK as sitk
 import numpy as np
 import pandas
 import pandas as pd
+import tables
 from tqdm import tqdm
 
-from utils import resample
+from utils import resample, forceImageIntoShape
 from utils import world2voxel
 
 LUNA_DATA_PATH = "/data/datasets/luna/"
@@ -167,13 +167,7 @@ for imgNum, img_file in enumerate(tqdm(file_list)):
 	resampledCandidatesDF.cancer = resampledCandidatesDF.cancer.astype('int')
 	resampledCandidatesDF.to_csv('/data/datasets/luna/resampledCandidates.tsv', sep='\t', index=False)
 
-
-
-	resized = np.zeros(RESAMPLED_IMG_SHAPE, dtype='int16')
-	xCopy = min(RESAMPLED_IMG_SHAPE[0], resampled.shape[0])
-	yCopy = min(RESAMPLED_IMG_SHAPE[1], resampled.shape[1])
-	zCopy = min(RESAMPLED_IMG_SHAPE[2], resampled.shape[2])
-	resized[:xCopy, :yCopy, :zCopy] = resampled[:xCopy, :yCopy, :zCopy]
+	resized = forceImageIntoShape(resampled, RESAMPLED_IMG_SHAPE)
 
 
 	#images.append([resized])  # get the remaining ones

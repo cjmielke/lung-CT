@@ -5,23 +5,22 @@ import matplotlib.pyplot as plt
 import numpy as np # linear algebra
 from skimage import measure
 
-from utils import getImage
+from utils import getImage, ImageArray
 from viz import showHist, mayaPlot
 
-INPUT_FOLDER = '/data/datasets/lung/sample_images/'
 
 
-DATADIR = '/data/datasets/luna/resampled_order1/'
-tsvFile = DATADIR+'resampledImages.tsv'
-arrayFile = DATADIR+'resampled.h5'
 
 
-DB = tables.open_file(arrayFile, mode='r')
-array = DB.root.resampled
+DATADIR = '/data/datasets/lung/resampled_order1/'
+tsvFile = DATADIR + 'resampledImages.tsv'
+#arrayFile = DATADIR + 'resampled.h5'
+arrayFile = DATADIR + 'segmented.h5'
 
-DF = pandas.read_csv(tsvFile, sep='\t')
-DF = DF.sample(frac=1)
-#DF = DF[DF.cancer != -1]  # remove images from the submission set
+imgSrc = ImageArray(arrayFile, tsvFile=tsvFile)
+DF, array = imgSrc.DF, imgSrc.array
+DF = DF[DF.cancer==1].head(1)
+
 
 
 row = DF.iloc[0]
@@ -33,21 +32,27 @@ showHist(image)
 
 
 # Show some slice in the middle
-plt.imshow(image[80], cmap=plt.cm.gray)
-plt.show()
+#plt.imshow(image[80], cmap=plt.cm.gray)
+#plt.show()
 
 
 from scipy import ndimage
 
 
-image = ndimage.interpolation.zoom(image, 0.1)
-print image.shape
+#image = ndimage.interpolation.zoom(image, 0.1)
+#print image.shape
 #c
 
 #plot_3d(pix_resampled, 400)
 mayaPlot(image, 400)			# ribcage
 
-c
+
+
+
+
+
+
+#c
 
 
 def largest_label_volume(im, bg=-1):

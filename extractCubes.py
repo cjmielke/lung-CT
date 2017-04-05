@@ -15,9 +15,9 @@ import numpy
 DATADIR = '/data/datasets/luna/resampled_order1/'
 SSD_DATADIR = '/ssd/luna/resampled_order1/'
 
-DATASET = DATADIR+'resampled.h5'
+#DATASET = DATADIR+'resampled.h5'
 #DATASET = DATADIR+'resampledCarray.h5'
-#DATASET = SSD_DATADIR + 'resampled.h5'
+DATASET = SSD_DATADIR + 'resampled.h5'
 #DATASET = '/data/datasets/luna/resampled.h5'
 
 #DATASET = DATADIR + 'segmented.h5'
@@ -57,9 +57,9 @@ if __name__ == '__main__':
 	candidatesDF = pandas.read_csv(DATADIR+'resampledCandidates.tsv', sep='\t').merge(imageDF, on='imgNum')
 
 
-	DF = candidatesDF
-	outArray = DATADIR + 'candidateCubes.h5'
-	outDF = DATADIR + 'candidateCubes.tsv'
+	DF = noduleDF
+	outArray = DATADIR + 'noduleCubes.h5'
+	outDF = outArray.replace('.h5', '.tsv')
 
 
 	cubeSize = args.cubeSize
@@ -75,7 +75,7 @@ if __name__ == '__main__':
 
 	DBo = tables.open_file(outArray, mode='w')
 	filters = tables.Filters(complevel=6, complib='blosc:snappy')      # 7.7sec / 1.2 GB   (14 sec 1015MB if precision is reduced)           140s 3.7GB
-	#filters = None
+	filters = None
 	cubes = DBo.create_earray(DBo.root, 'cubes', atom=tables.Int16Atom(shape=CUBE_SHAPE), shape=(0,), expectedrows=len(DF), filters=filters)
 	#cubes = DBo.create_carray(DBo.root, 'cubes', 
 	#						  atom=tables.Int16Atom(shape=CUBE_SHAPE), 

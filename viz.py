@@ -19,6 +19,9 @@ def mayaPlot(s, val):
 	mlab.show()
 
 
+
+
+
 def plot_3d(image, threshold=-300):
 
 	# Position the scan upright,

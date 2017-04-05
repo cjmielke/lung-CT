@@ -83,7 +83,7 @@ def candidateGen(imageArray, candidatesDF, cubeSize=20, autoencoder=False):
 
 class CubeGen:
 
-	def __init__(self, arrayFile, tsvFile, trainImagesDF, valImagesDF, autoencoder=False, storeInRam=False, cubeSize=None):
+	def __init__(self, arrayFile, trainImagesDF, valImagesDF, autoencoder=False, cubeSize=None, tsvFile=None):
 		'''
 		Stream pre-extracted image cubes of nodules or nodule candidates ..... which is faster
 		:param arrayFile: pytables array with images
@@ -92,6 +92,8 @@ class CubeGen:
 		:param valImages: dataframe of validation images
 		:return: an object with generator methods returning training and validation instances
 		'''
+
+		if not tsvFile: tsvFile = arrayFile.replace('.h5', '.tsv')
 
 		noduleDF = pandas.read_csv(tsvFile, sep='\t')#.merge(imageDF, on='imgNum')
 		self.DB = tables.open_file(arrayFile, mode='r')
@@ -106,6 +108,7 @@ class CubeGen:
 			for _, row in noduleDF.iterrows():
 				noduleNum = int(row['noduleNum'])
 				cube = self.DB.root.cubes[noduleNum]
+				print cube.mean()
 				self.array.append(cube)
 
 
@@ -162,10 +165,9 @@ class CubeGen:
 			'diam': getNoduleDiameter(row),
 			#'candidate': 1.0
 		}
-		cube = numpy.expand_dims(cube, axis=3)
+		#cube = numpy.expand_dims(cube, axis=3)			# moved into prepCube
 
-		if self.autoencoder:
-			targets['imgOut'] = cube
+		if self.autoencoder: targets['imgOut'] = cube
 		return [row['imgNum'], cube, targets]
 
 	def _trainGen(self):

@@ -7,6 +7,7 @@ import threading
 import numpy
 import numpy as np
 import pandas
+
 from keras import backend as K
 from numpy.random import random
 from scipy import ndimage
@@ -203,7 +204,7 @@ class ImageArray():
 		self.DB = tables.open_file(arrayFile, mode='r')
 		self.array = self.DB.root.__getattr__(leafName)
 
-		assert len(self.DF) == len(self.array)
+		assert len(self.DF) == len(self.array), 'DataFrame has %s rows but array has %s images' % (len(self.DF), len(self.array))
 
 		self.nImages = len(self.DF)
 
@@ -234,9 +235,11 @@ def getImage(imageArray, row, convertType=True):
 
 
 
-def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True, prep=None):
+def getImageCubes(image, cubeSize, filterBackground=True, prep=None, paddImage=False):
 
 	assert prep is not None, 'You must explicitly tell me if I should prep cubes for the model, or if these are RAW'
+
+
 
 	# loop over the image, extracting cubes and applying model
 	dim = numpy.asarray(image.shape)
@@ -245,7 +248,31 @@ def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True,
 	nChunks = dim / cubeSize
 	# print 'Number of chunks in each direction: ', nChunks
 
+	'''
+	if paddImage:
+		gap = dim - nChunks*cubeSize
+		pad = [(0,p+1) for p in gap]
+		image = numpy.pad(image, pad, mode='constant')
+		dim = numpy.asarray(image.shape)
+		nChunks = dim / cubeSize		# recompute
+	'''
+
+	if paddImage:
+		gap = dim - nChunks*cubeSize
+		newSize = dim + gap + 1
+		newImage = numpy.zeros(newSize)
+		newImage[:dim[0], :dim[1], :dim[2]] = image
+		image = newImage
+		dim = numpy.asarray(image.shape)
+		nChunks = dim / cubeSize		# recompute
+
+
+	print 'dimension of image: ', image.shape
+
+
+
 	positions = [p for p in itertools.product(*map(xrange, nChunks))]
+	print len(positions)
 
 	#if filterBackground: image[image<-1000] = -1000			# dont let weird background values bias things
 
@@ -266,8 +293,6 @@ def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True,
 		# apply same normalization as in training
 		if prep: cube = prepCube(cube, augment=False)
 
-		if expandChannelDim: cube = numpy.expand_dims(cube, axis=3)
-
 		cubes.append(cube)
 		indexPosL.append(indexPos)
 
@@ -275,6 +300,10 @@ def getImageCubes(image, cubeSize, filterBackground=True, expandChannelDim=True,
 	#assert len(cubes), 'Damn, no cubes. Image stats: %s %s %s ' % (image.min(), image.mean(), image.max())
 	#assert len(indexPosL)
 	return cubes, indexPosL
+
+
+
+
 
 
 def augmentCube(cube):
@@ -305,6 +334,9 @@ def prepCube(cube, augment=True):
 		assert cube.shape == (cubeSize, cubeSize, cubeSize)
 
 	if augment: cube = augmentCube(cube)
+
+	cube = numpy.expand_dims(cube, axis=3)		# insert dummy channel
+
 	return cube
 
 
@@ -312,3 +344,13 @@ def convertColsToInt(DF, columns):
 	for col in columns:
 		DF[col] = DF[col].astype('int')
 		return DF
+
+
+def forceImageIntoShape(image, DESIRED_SHAPE):
+	resized = np.zeros(DESIRED_SHAPE, dtype='int16')
+	xCopy = min(DESIRED_SHAPE[0], image.shape[0])
+	yCopy = min(DESIRED_SHAPE[1], image.shape[1])
+	zCopy = min(DESIRED_SHAPE[2], image.shape[2])
+	resized[:xCopy, :yCopy, :zCopy] = image[:xCopy, :yCopy, :zCopy]
+
+	return resized

@@ -3,9 +3,79 @@
 import tables
 
 import pandas
+import numpy
 from tqdm import trange
 
-from utils import ImageArray, getImage, getImageCubes, convertColsToInt
+from utils import ImageArray, getImage, getImageCubes, convertColsToInt, prepCube
+
+
+class SparseImageSource():
+	def __init__(self, arrayFile, tsvFile=None):
+		sparseImages = ImageArray(arrayFile, tsvFile=tsvFile, leafName='cubes')
+		self.DF = sparseImages.DF
+		self.array = sparseImages.array
+		self.cubeSize = self.array[0].shape[0]
+
+	def getImageCubes(self, imgNum):
+		imageCubes = self.DF[self.DF.imgNum==imgNum]
+		cubes = []
+		for _, cubeRow in imageCubes.iterrows():
+			cubeNum = cubeRow['cubeNum']
+			cube = self.array[cubeNum]
+			cubes.append(cube)
+		return cubes
+
+	def getCubesAndPositions(self, row, posType=None):
+
+		imgNum = row['imgNum']
+
+		assert posType is not None, 'You must select a position type ... in cube units or real voxels'
+
+		cubeRows = self.DF[self.DF.imgNum==imgNum]
+
+		cubes, positions = [], []
+
+		for _, r in cubeRows.iterrows():
+			#print cubeRow
+			if posType=='real': z, y, x = r.realZ, r.realY, r.realX
+			elif posType=='pos': z, y, x = r.posZ, r.posY, r.posX
+
+			cubeNum = r['cubeNum']
+			cube = self.array[cubeNum]
+			pos = (z, y, x)
+
+			positions.append(pos)
+
+			cubes.append(cube)
+
+		return cubes, positions
+
+
+
+	def getImageFromSparse(self, row, convertType=True):
+		image = numpy.zeros((row.shapeZ, row.shapeY, row.shapeX)) - 2000		# important! Dont forget background is NOT ZERO
+
+		imgNum = row['imgNum']
+
+		cs = self.cubeSize
+		for cube, position in self.getCubesAndPositions(row, posType='real'):
+			z, y, x = position
+			image[z:z + cs, y:y + cs, x:x + cs] = cube
+
+		print image.dtype
+		#if convertType:
+		#	if image.dtype != K.floatx(): image = image.astype(K.floatx())
+
+		return image
+
+
+
+
+
+
+
+
+
 
 
 def extractNonzero(arrayFile, arrayOut, cubeSize=32):
@@ -35,7 +105,7 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 		print image.shape
 
 
-		cubes, positions = getImageCubes(image, cubeSize, prep=False, expandChannelDim=False)		# extract raw cubes from image
+		cubes, positions = getImageCubes(image, cubeSize, prep=False)		# extract raw cubes from image
 		print 'Got %d cubes' % len(cubes)
 
 		for cube, pos in zip(cubes, positions):
@@ -94,6 +164,7 @@ if __name__ == '__main__':
 	arrayOut = DATADIR + 'segmentedNonzero.h5'
 
 	extractNonzero(arrayFile, arrayOut)
+
 
 
 

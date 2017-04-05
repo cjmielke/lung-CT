@@ -1,12 +1,12 @@
-import tables
-
 import numpy
 import pandas
+import tables
 from keras.callbacks import Callback
 from scipy import integrate
 from scipy.stats import describe
 from sklearn.metrics import roc_curve
 
+from extractNonzeroCubes import SparseImageSource
 from gradCam import buildGradientFunction
 from utils import getImage, getImageCubes, ImageArray
 
@@ -180,45 +180,6 @@ class testDSBdata(Callback):
 
 
 
-class SparseImageSource():
-	def __init__(self, arrayFile, tsvFile=None):
-		sparseImages = ImageArray(arrayFile, tsvFile=tsvFile, leafName='cubes')
-		self.DF = sparseImages.DF
-		self.array = sparseImages.array
-		self.cubeSize = self.array[0].shape[0]
-
-	def getImageCubes(self, row):
-		imageCubes = self.DF[self.DF.imgNum==row['imgNum']]
-		cubes = []
-		for _, cubeRow in imageCubes.iterrows():
-			cubeNum = cubeRow['cubeNum']
-			cube = self.array[cubeNum]
-			cubes.append(cube)
-		return cubes
-
-	def getImageFromSparse(self, row, convertType=True):
-		#print row
-		Z, Y, X = row.shapeZ, row.shapeY, row.shapeX
-		image = numpy.zeros((Z, Y, X, 1))
-
-		imageCubes = self.DF[self.DF.imgNum==row['imgNum']]
-		cs = self.cubeSize
-		for _, cubeRow in imageCubes.iterrows():
-			#print cubeRow
-			z, y, x = cubeRow[['realZ', 'realY', 'realX']].as_matrix()
-			#print image.shape, z, y, x
-			cubeNum = cubeRow['cubeNum']
-			cube = self.array[cubeNum]
-			#print 'cube stats: ', cube.min(), cube.mean(), cube.max()
-			image[z:z+cs, y:y+cs, x:x+cs, :] = cube 
-
-		print image.dtype
-		#if convertType:
-		#	if image.dtype != K.floatx(): image = image.astype(K.floatx())
-
-		return image
-
-
 
 
 if __name__ == '__main__':
@@ -255,7 +216,7 @@ if __name__ == '__main__':
 		noduleScores = predictImage(image, model, cubeSize)
 
 		# predictions based on cube list
-		cubes = sparseImages.getImageCubes(row)
+		cubes = sparseImages.getImageCubes(row['imgNum'])
 		predictions = predictAllCubes(model, cubes)
 		noduleScores, diam, decodedImg = predictions
 

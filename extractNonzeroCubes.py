@@ -12,7 +12,7 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 
 	tsvOut = arrayOut.replace('.h5','.tsv')
 
-	CUBE_SHAPE = (cubeSize, cubeSize, cubeSize, 1)
+	CUBE_SHAPE = (cubeSize, cubeSize, cubeSize)
 
 
 	segImages = ImageArray(arrayFile)
@@ -35,7 +35,7 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 		print image.shape
 
 
-		cubes, positions = getImageCubes(image, cubeSize, prep=False)		# extract raw cubes from image
+		cubes, positions = getImageCubes(image, cubeSize, prep=False, expandChannelDim=False)		# extract raw cubes from image
 		print 'Got %d cubes' % len(cubes)
 
 		for cube, pos in zip(cubes, positions):

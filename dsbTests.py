@@ -230,7 +230,7 @@ if __name__ == '__main__':
 	_, x,y,z, channels = model.input_shape
 	cubeSize = x
 
-	gradient_function = buildGradientFunction(model)
+	gradient_function, camShape = buildGradientFunction(model)
 
 	dsbImages = ImageArray(arrayFile, tsvFile=tsvFile)
 	array, DF = dsbImages.array, dsbImages.DF

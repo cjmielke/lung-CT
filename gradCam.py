@@ -5,6 +5,7 @@
 import keras.backend as K
 import numpy
 from scipy.stats import describe
+from scipy.ndimage import zoom
 
 from convertToNifti import vol2Nifti
 from utils import getImage, getImageCubes, ImageArray
@@ -18,8 +19,8 @@ def buildGradientFunction(model, output='nodule', poolLayer = 'pool2'):
 
 	loss_layer = model.get_layer(output)
 	loss = K.sum(loss_layer.output)
-	layer = model.get_layer(poolLayer)
-	conv_output = layer.output
+	outLayer = model.get_layer(poolLayer)
+	conv_output = outLayer.output
 	grads = normalize(K.gradients(loss, conv_output)[0])
 
 	gradient_function = K.function(
@@ -27,7 +28,7 @@ def buildGradientFunction(model, output='nodule', poolLayer = 'pool2'):
 		[conv_output, grads]
 	)
 
-	return gradient_function
+	return gradient_function, outLayer.output_shape
 
 
 
@@ -86,8 +87,7 @@ if __name__ == '__main__':
 
 
 	model.compile('sgd', 'binary_crossentropy')
-	gradient_function = buildGradientFunction(model)
-
+	gradient_function, cubeCamShape  = buildGradientFunction(model)
 
 
 
@@ -101,46 +101,45 @@ if __name__ == '__main__':
 
 		describe(image.flatten())
 
-		from scipy.ndimage import zoom
 		smallImg = zoom(image, 0.25)
 		print smallImg.shape
-
 		numpy.save('segImg.npy', smallImg)
 
 
 		cubes, indexPos = getImageCubes(image, cubeSize, filterBackground=True, prep=True)
 		for c in cubes: assert c.max() <= 499.0
 
-		res = []
+		nChunks = imgShape / cubeSize
+		camImageSize = nChunks * cubeCamShape
+		print camImageSize
+		bigCam = numpy.zeros(camImageSize)
+
+
 		print 'number of cubes returned: ', len(cubes)
 		for cube, pos in zip(cubes,indexPos):
 			cam = grad_cam([cube], gradient_function)
 			cube = numpy.expand_dims(cube, axis=0)
 			predictions = model.predict([cube])
 			noduleScore, diam, decodedImg = predictions
+			print 'score =========', noduleScore
 			cam = cam*noduleScore
-			res.append((cam, pos))
-			#break
-			#print cam.shape
 
 
-		firstCam, _ = res[0]
-		camShape = numpy.asarray(firstCam.shape)
-
-		nChunks = imgShape / cubeSize
-		outSize = nChunks*camShape
-		print outSize
-		bigCam = numpy.zeros(outSize)
-
-		cs = camShape[0]
-		for cam, pos in res:
-			z, y, x = pos*camShape
+			z, y, x = pos * cubeCamShape
 			#print pos, z, y, x
 			#print numpy.asarray(pos)
 			#print cam.mean()
 			bigCam[z:z+cs, y:y+cs, x:x+cs] = cam 
 
-		zoomDown = 1.0*outSize/imgShape
+
+
+
+
+
+
+
+
+		zoomDown = 1.0 * camImageSize / imgShape
 		print zoomDown
 		sImage = zoom(image, zoomDown)
 
@@ -151,7 +150,7 @@ if __name__ == '__main__':
 		numpy.save('simage.npy', sImage)
 
 
-		zoomUp = imgShape/outSize
+		zoomUp = imgShape / camImageSize
 		zoomUp=0.3*zoomUp
 		bigCam = zoom(bigCam, zoomUp)
 		print image.shape, bigCam.shape

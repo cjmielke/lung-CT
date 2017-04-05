@@ -308,7 +308,7 @@ def getImageCubes(image, cubeSize, filterBackground=True, prep=None, paddImage=F
 
 def augmentCube(cube):
 
-	affine = numpy.eye(3) + 0.4*(random((3,3))-0.5)
+	affine = numpy.eye(3) + 0.9*(random((3,3))-0.5)
 	#print affine
 
 	#return ebuc

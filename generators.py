@@ -232,10 +232,8 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 					'diam' : diam
 				}
 
-				imgOut = numpy.expand_dims(cube, axis=3)
-				if autoencoder: targets['imgOut'] = imgOut
+				if autoencoder: targets['imgOut'] = cube
 
-				cube = numpy.expand_dims(cube, axis=3)
 
 				#print pos, cube.mean(), numNodules, numCandidates
 

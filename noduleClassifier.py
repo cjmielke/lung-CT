@@ -328,8 +328,8 @@ if __name__ == '__main__':
 	candidateGen = CubeGen(DATADIR + 'candidateCubes.h5', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
 	noduleGen = CubeGen(DATADIR + 'noduleCubes.h5', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
 
-	for imgNum, cube, targets in noduleGen.valGen:
-		print imgNum, cube.shape, cube.mean(), targets['nodule']
+	#for imgNum, cube, targets in noduleGen.valGen:
+	#	print imgNum, cube.shape, cube.mean(), targets['nodule']
 
 
 
@@ -341,15 +341,15 @@ if __name__ == '__main__':
 	encoder, autoencoder = buildAutoencoder(inputShape, filters=args.filters)
 
 
-	#stratifiedQ = Batcher(
-	#	tGen, vGen,
-	#	trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
-
-
 	stratifiedQ = Batcher(
-		candidateGen.trainGen, candidateGen.valGen,
-		trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen,
-		batchSize=args.batchSize)
+		tGen, vGen,
+		trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
+
+
+	#stratifiedQ = Batcher(
+	#	candidateGen.trainGen, candidateGen.valGen,
+	#	trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen,
+	#	batchSize=args.batchSize)
 
 	#tester = testDSBdata(period=10, numImages=2)
 

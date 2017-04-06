@@ -363,7 +363,7 @@ if __name__ == '__main__':
 
 	#lh.writeLog(lastN=100)
 
-
+	lh.writeToSQL('lungExp2', OUTDIR+'exp.tsv')
 
 
 

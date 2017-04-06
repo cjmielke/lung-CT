@@ -3,6 +3,7 @@ import os
 from pkg_resources import parse_version
 
 import numpy as np
+import pandas
 from keras import backend as K
 from keras.callbacks import Callback
 from scipy import integrate
@@ -62,25 +63,39 @@ class fgLogger(Callback):
 
 		self.writeLog(lastN=20)
 
+	def writeToSQL(self, table, outTsv):
+		DB = 'fglab'
+		from sqlalchemy import create_engine
+		MYSQL_USER = 'root'
+		MYSQL_PASSWORD = 'password'
+		MYSQL_HOST = '127.0.0.1'
+		engine = create_engine('mysql://%(username)s:%(password)s@%(host)s/%(db)s' % {'username':MYSQL_USER,'password':MYSQL_PASSWORD,'host':MYSQL_HOST, 'db': DB})
 
-	def writeLog(self, lastN=100):
+		DF = pandas.DataFrame()
+		s = pandas.Series({})
+		#s.name = 
+
+
+		DF = DF.append(s)
+		DF.to_sql(table, engine, flavor='sqlalchemy', schema=DB, if_exists='append')
+
+		DF.to_csv(outTsv, sep='\t')
+
+
+	def writeLog(self, lastN=30):
 		if 'loss' not in self.log: return
 		if 'val_loss' not in self.log: return
 		f = os.path.join(self.logDir, 'scores.json')
 		with open(f, 'w') as lf:
 			o = {
-				'_scores': {
-					'loss_t': round(np.asarray(self.log['loss'])[-lastN:].mean(), 2),
-					'loss_v':  round(np.asarray(self.log['val_loss'])[-lastN:].mean(), 2)
-				}
+				'_scores': {}
 			}
-			if 't_AUC' in self.log:
-				o['_scores']['AUC_t'] = round(np.asarray(self.log['t_AUC']).mean(), 2)
-			if 'v_AUC' in self.log:
-				o['_scores']['AUC_v'] = round(np.asarray(self.log['v_AUC']).mean(), 2)
 
 
-			for key in ['imgOut_loss', 'val_imgOut_loss', 'acc', 'val_acc', 'cancer_acc', 'val_cancer_acc']:
+			for key in ['imgOut_loss', 'acc', 'cancer_acc', 'cancer_loss', 'loss']:
+				if key in self.log:
+					o['_scores'][key] = round(np.asarray(self.log[key])[-lastN:].mean(), 2)
+				key = 'val_'+key
 				if key in self.log:
 					o['_scores'][key] = round(np.asarray(self.log[key])[-lastN:].mean(), 2)
 
@@ -95,7 +110,6 @@ class fgLogger(Callback):
 			#print o
 			j = json.dumps(o)
 			lf.write(j)
-
 
 
 
@@ -138,7 +152,7 @@ class fgLogger(Callback):
 					}
 				o['_charts'].append(chart)
 
-			if 't_AUC' in self.log and 'v_AUC' in self.log:
+			if 'acc' in self.log and 'v_AUC' in self.log:
 				chart = {
 						'axis': {
 							'x': {'label': 'Iteration'},
@@ -153,6 +167,8 @@ class fgLogger(Callback):
 						}
 					}
 				o['_charts'].append(chart)
+
+
 
 
 			j = json.dumps(o)

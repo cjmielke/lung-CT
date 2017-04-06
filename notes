@@ -11,11 +11,30 @@ TODO:
 
 Organize files to make them more clear
     We need resampled and segmented datasets, each with their own downstream cube sources for training
+    IT MIGHT BE A BAD IDEA TO TRAIN ON NON-SEGMENTED LUNGS BUT MAKE CAM-MAPS ON SEGMENTED ONES
+    
+Try finding bounding box of CAM images and scaling them to a common size
+    SCALED_CAM_IMAGE_SHAPE
+
+Try ZERO-centering CAM images
+
+Try another layer on the lung classifier! Or one less layer
+
+Try global average pooling instead of the flatten operation
+
+Try adding other channels to CAM images
+    * a layer, or a few, representing nodule sizes
+    * a layer of the underlying image
+
+Try adding DROPOUT and include it as a parameter
 
 Try extracting cubes from the segmented DSB images and store them in a single array, alongside
     a corresponding TSV file that has imgNum | Xind | Yind | Zind | Xpos | Ypos | Zpos information
 
     This could produce a DSB callback that runs in reasonable time ....
+
+
+Try producing CAM images on non-segmented images
 
 
 Implement selection between raw and segmented training in FGLab so comparisons can be made
@@ -26,11 +45,35 @@ Build softmax representation of noduleSize/cancer classes to see if evaluation i
 
 Try alternate cube Sizes
 
+
+
+
+
 Get ANTS working
     See if registration on low-res images can be used to transform high res images
     Try bone-only or lung-only registrations
 
 Use ANTS to transform GRAD maps into a new trainable space
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

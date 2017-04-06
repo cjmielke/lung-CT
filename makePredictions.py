@@ -143,7 +143,8 @@ if __name__ == '__main__':
 		image = array[imgNum]
 		cam = prepCam(image)
 
-		prob, imgOut = model.predict(cam)
+		ret = model.predict(cam)
+		prob, imgOut = ret[0]
 		print prob
 
 

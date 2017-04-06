@@ -144,8 +144,8 @@ if __name__ == '__main__':
 		cam = prepCam(image)
 
 		ret = model.predict(cam)
+		crash
 		prob = ret[0]
-
 
 
 		cancerProb = prob[0]

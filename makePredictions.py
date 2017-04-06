@@ -144,17 +144,16 @@ if __name__ == '__main__':
 		cam = prepCam(image)
 
 		prob, imgOu = model.predict(cam)
-		cancerProb = prob[0]
+		cancerProb = prob[0][0]
 		print prob[0]
 
 		s = pandas.Series({
 			#'id': row['uuid'],
-			'cancer': cancerProb[0]
+			'cancer': cancerProb
 		})
 		s.name = row['uuid']
 		predictionDF = predictionDF.append(s)
 
-		predictionDF.to_csv('predictions.csv', index_label='id')
 
 
 	predictionDF.to_csv('predictions.csv', index_label='id')

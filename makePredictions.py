@@ -143,7 +143,10 @@ if __name__ == '__main__':
 		image = array[imgNum]
 		cam = prepCam(image)
 
-		prob, imgOu = model.predict(cam)
+		ret = model.predict(cam)
+		prob = ret[0]
+
+
 		cancerProb = prob[0][0]
 		print prob[0]
 

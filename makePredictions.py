@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
 
 	arrayFile = '/ssd/cams.h5'
-	imgSrc = ImageArray(arrayFile)
+	imgSrc = ImageArray(arrayFile, leafName='cams')
 	DF, array = imgSrc.DF, imgSrc.array
 
 	modelFile = sys.argv[1]

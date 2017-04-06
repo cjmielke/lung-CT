@@ -347,7 +347,7 @@ if __name__ == '__main__':
 	model.fit_generator(
 		trainGen(),
 		verbose=2,
-		epochs=200,
+		epochs=400,
 		samples_per_epoch=args.batchSize,
 		steps_per_epoch=8,
 		callbacks=[tb, tb2, lh],

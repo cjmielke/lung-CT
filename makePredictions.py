@@ -138,7 +138,7 @@ if __name__ == '__main__':
 	print len(DF)
 
 
-	for _, row in DF.itterrows():
+	for _, row in DF.iterrows():
 		imgNum = row['imgNum']
 		image = array[imgNum]
 		cam = prepCam(image)

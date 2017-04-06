@@ -108,7 +108,7 @@ def buildTrainingSet(DF, segImages):
 # try and emulate same prep as in training
 def prepCam(cam):
 	cam = numpy.expand_dims(cam, axis=3)
-	#cam = numpy.expand_dims(cam, axis=0)  # emulate a batch with several instances
+	cam = numpy.expand_dims(cam, axis=0)  # emulate a batch with several instances
 	return cam
 
 

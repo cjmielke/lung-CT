@@ -149,11 +149,12 @@ if __name__ == '__main__':
 
 		s = pandas.Series({
 			#'id': row['uuid'],
-			'cancer': cancerProb
+			'cancer': cancerProb[0]
 		})
 		s.name = row['uuid']
 		predictionDF = predictionDF.append(s)
 
+		predictionDF.to_csv('predictions.csv', index_label='id')
 
 
 	predictionDF.to_csv('predictions.csv', index_label='id')

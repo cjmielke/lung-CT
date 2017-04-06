@@ -105,7 +105,11 @@ def buildTrainingSet(DF, segImages):
 
 
 
-
+# try and emulate same prep as in training
+def prepCam(cam):
+	cam = numpy.expand_dims(cam, axis=3)
+	cam = numpy.expand_dims(cam, axis=0)  # emulate a batch with several instances
+	return cam
 
 
 
@@ -124,6 +128,7 @@ if __name__ == '__main__':
 	camSize = x
 
 
+	predictionDF = pandas.DataFrame()
 
 
 
@@ -131,6 +136,15 @@ if __name__ == '__main__':
 
 	DF = DF[DF.cancer==-1]
 	print len(DF)
+
+
+	for _, row in DF.itterrows():
+		imgNum = row['imgNum']
+		image = array[imgNum]
+		cam = prepCam(image)
+
+		probs = model.predict_proba(cam)
+		print probs
 
 
 

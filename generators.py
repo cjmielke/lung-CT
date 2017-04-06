@@ -49,7 +49,6 @@ def candidateGen(imageArray, candidatesDF, cubeSize=20, autoencoder=False):
 
 			#print cube.min(), cube.mean(), cube.max()
 
-
 			if cube.mean() < -3000:
 				# print cube.mean()
 				# print 'empty cube'
@@ -84,21 +83,12 @@ def candidateGen(imageArray, candidatesDF, cubeSize=20, autoencoder=False):
 class CubeGen:
 
 	def __init__(self, arrayFile, trainImagesDF, valImagesDF, autoencoder=False, cubeSize=None, tsvFile=None):
-		'''
-		Stream pre-extracted image cubes of nodules or nodule candidates ..... which is faster
-		:param arrayFile: pytables array with images
-		:param tsvFile: tsv file describing nodules in pytables array
-		:param trainImages: dataframe of training images
-		:param valImages: dataframe of validation images
-		:return: an object with generator methods returning training and validation instances
-		'''
 
 		if not tsvFile: tsvFile = arrayFile.replace('.h5', '.tsv')
 
 		noduleDF = pandas.read_csv(tsvFile, sep='\t')#.merge(imageDF, on='imgNum')
 		self.DB = tables.open_file(arrayFile, mode='r')
 		self.array = self.DB.root.cubes
-
 
 		print 'pytables array length: ', len(self.array)
 
@@ -111,9 +101,7 @@ class CubeGen:
 				#print cube.mean()
 				self.array.append(cube)
 
-
 			#self.array[4] *= 0		# tag a single array to see where it pops out
-
 
 		storedCubeSize = self.array[0].shape[0]
 		if cubeSize: self.cubeSize = cubeSize
@@ -148,7 +136,6 @@ class CubeGen:
 
 	def ret(self, row):
 		noduleNum = int(row['noduleNum'])
-		#print 'noduleNum', noduleNum
 		assert noduleNum < len(self.array)
 		cube = self.array[noduleNum]
 		cube = prepCube(cube)
@@ -157,15 +144,11 @@ class CubeGen:
 		if self.allNodules: nodule=1.0
 		else: nodule = row['class']
 
-
-		#print 'diammeter: ', diam
-
 		targets = {
 			'nodule': nodule,
 			'diam': getNoduleDiameter(row),
 			#'candidate': 1.0
 		}
-		#cube = numpy.expand_dims(cube, axis=3)			# moved into prepCube
 
 		if self.autoencoder: targets['imgOut'] = cube
 		return [row['imgNum'], cube, targets]
@@ -184,9 +167,6 @@ class CubeGen:
 				#i, c, t = res			# sanity checks
 				#c = numpy.flip(c, axis=0)
 				#c = numpy.flip(c, axis=1)
-				#c = numpy.flip(c, axis=2)
-				#print c.mean()-o.mean()
-				#res = [i, c, t]
 				yield res
 
 
@@ -336,8 +316,61 @@ class Batcher:
 
 
 
+'''
+
+
+def camGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoencoder=False, atMost=200):
+	while True:
+		for _, row in imageDF.iterrows():
+
+			image, imageNum = getImage(imageArray, row)
+
+			imgNodules = noduleDF[noduleDF.imgNum==imageNum]
+			imgCandidates = candidatesDF[candidatesDF.imgNum==imageNum]
+
+			#if autoencoder: image = numpy.expand_dims(image, axis=2)
+
+
+			cubes, positions = getImageCubes(image, cubeSize, prep=True)
+			for cube, pos in zip(cubes, positions):
+				realPos = pos*cubeSize
+				z, y, x = realPos
+
+				#if random() > 0.4 and cube.mean() < 300: continue			# doesn't  work! its normalized now
+
+				# is there a nodule or candidates in this cube?
+				nodulesInCube = findNodules(imgNodules, x, y, z, cubeSize)
+				numNodules = len(nodulesInCube)
+				candidatesInCube = findNodules(imgCandidates, x, y, z, cubeSize)
+				numCandidates = len(candidatesInCube)
+
+				if (numNodules or numCandidates): print 'Candidates: %s Nodules: %s' % (numCandidates, numNodules)
+				#else: print '-'*10
+				#if numCandidates: plot_nodule(cube)
+
+				if len(nodulesInCube):
+					diam = getNoduleDiameter(nodulesInCube.iloc[0])
+				else: diam = getNoduleDiameter(None)
+
+				targets = {
+					'nodule': (numNodules>0)*1.0,
+					#'candidate': (numCandidates>0)*1.0,
+					'diam' : diam
+				}
+
+				if autoencoder: targets['imgOut'] = cube
+
+
+				#print pos, cube.mean(), numNodules, numCandidates
+
+				yield [imageNum, cube, targets]
 
 
 
+
+
+
+
+'''
 
 

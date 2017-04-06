@@ -60,7 +60,7 @@ class fgLogger(Callback):
 		#print self.log.keys()
 		#print self.log
 
-		self.writeLog(lastN=1)
+		self.writeLog(lastN=20)
 
 
 	def writeLog(self, lastN=100):
@@ -79,10 +79,18 @@ class fgLogger(Callback):
 			if 'v_AUC' in self.log:
 				o['_scores']['AUC_v'] = round(np.asarray(self.log['v_AUC']).mean(), 2)
 
-			if 'nodule_acc' in self.log:
-				o['_scores']['nodule_acc'] = round(np.asarray(self.log['nodule_acc'])[-lastN:].mean(), 2)
-			if 'val_nodule_acc' in self.log:
-				o['_scores']['val_nodule_acc'] = round(np.asarray(self.log['val_nodule_acc'])[-lastN:].mean(), 2)
+
+			for key in ['imgOut_loss', 'val_imgOut_loss', 'acc', 'val_acc', 'cancer_acc', 'val_cancer_acc']:
+				if key in self.log:
+					o['_scores'][key] = round(np.asarray(self.log[key])[-lastN:].mean(), 2)
+
+
+			if 'cancer_acc' in self.log:
+				o['_scores']['cancer_acc'] = round(np.asarray(self.log['cancer_acc'])[-lastN:].mean(), 2)
+			if 'val_cancer_acc' in self.log:
+				o['_scores']['val_cancer_acc'] = round(np.asarray(self.log['val_cancer_acc'])[-lastN:].mean(), 2)
+
+
 
 			#print o
 			j = json.dumps(o)

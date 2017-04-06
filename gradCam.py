@@ -14,6 +14,10 @@ from extractNonzeroCubes import SparseImageSource
 from utils import getImage, getImageCubes, ImageArray, prepCube, forceImageIntoShape
 
 
+
+CAM_SHAPE = (150, 150, 150)
+
+
 def normalize(x): # utility function to normalize a tensor by its L2 norm
 	return x / (K.sqrt(K.mean(K.square(x))) + 1e-5)
 
@@ -159,12 +163,12 @@ def buildTrainingSet(DF, segImages):
 
 	sparseImages = SparseImageSource('/data/datasets/lung/resampled_order1/segmentedNonzero.h5')
 
-	outArray = '/ssd/cams.h5'
+	outArray = '/ssd/camsB.h5'
 	outTsv = outArray.replace('.h5', '.tsv')
 
 	camImageDF = pandas.DataFrame()
 
-	CAM_SHAPE = (150, 150, 150)
+
 
 	DBo = tables.open_file(outArray, mode='w')
 	filters = tables.Filters(complevel=6, complib='blosc:snappy')      # 7.7sec / 1.2 GB   (14 sec 1015MB if precision is reduced)           140s 3.7GB
@@ -199,7 +203,7 @@ def buildTrainingSet(DF, segImages):
 		cam = forceImageIntoShape(camImage, CAM_SHAPE)
 
 		cams.append([cam])
-		camImageDF.append(row)
+		camImageDF = camImageDF.append(row)
 
 		camImageDF.to_csv(outTsv, sep='\t')
 

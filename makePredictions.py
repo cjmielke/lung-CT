@@ -143,9 +143,8 @@ if __name__ == '__main__':
 		image = array[imgNum]
 		cam = prepCam(image)
 
-		ret = model.predict(cam)
-		prob, imgOut = ret[0]
-		print prob
+		prob, imgOu = model.predict(cam)
+		print prob[0]
 
 
 

@@ -147,7 +147,7 @@ if __name__ == '__main__':
 		prob = ret[0]
 
 
-		cancerProb = prob
+		cancerProb = prob[0]
 		print prob[0]
 
 		s = pandas.Series({

@@ -20,62 +20,6 @@ def getNoduleDiameter(row):
 	return diam
 
 
-def candidateGen(imageArray, candidatesDF, cubeSize=20, autoencoder=False):
-	'''
-	this generator loops over candidates only
-	SLOW AS FUCK! but only if training and validation are simultaneously used ....
-	'''
-	oldImgNum = None
-	while True:
-		for index, row in candidatesDF.iterrows():
-
-			if row['imgNum'] != oldImgNum:
-				print ' new image loded =============='
-				image, imageNum = getImage(imageArray, row)
-				oldImgNum = imageNum
-
-			normImg = normalizeStd(image.clip(min=-1000, max=700))
-
-			voxelC = row[['voxelZ', 'voxelY', 'voxelX']].as_matrix()
-
-			p = cubeSize/2
-			for i in [0,1,2]: voxelC[i] = numpy.clip(voxelC[i], p, image.shape[i]-p )
-			zMin, zMax = int(voxelC[0]-p), int(voxelC[0]+p)
-			yMin, yMax = int(voxelC[1]-p), int(voxelC[1]+p)
-			xMin, xMax = int(voxelC[2]-p), int(voxelC[2]+p)
-
-			cube = image[ zMin: zMax, yMin: yMax, xMin: xMax ]
-			assert cube.shape == (cubeSize, cubeSize, cubeSize)
-
-			#print cube.min(), cube.mean(), cube.max()
-
-			if cube.mean() < -3000:
-				# print cube.mean()
-				# print 'empty cube'
-				continue
-
-			cube = normImg[zMin: zMax, yMin: yMax, xMin: xMax]
-			# print cube.min(), cube.mean(), cube.max()
-
-			isCancerous = row['class']
-
-			targets = {
-				'nodule': isCancerous,
-				#'candidate': 1
-			}
-
-			imgOut = numpy.expand_dims(cube, axis=3)
-			if autoencoder: targets['imgOut'] = imgOut
-
-			cube = numpy.expand_dims(cube, axis=3)
-
-			# print pos, cube.mean(), numNodules, numCandidates
-			#gc.collect()
-			yield [imageNum, cube, targets]
-
-
-
-
 
 
 
@@ -138,7 +82,7 @@ class CubeGen:
 		noduleNum = int(row['noduleNum'])
 		assert noduleNum < len(self.array)
 		cube = self.array[noduleNum]
-		cube = prepCube(cube)
+		cube = prepCube(cube, cubeSize=self.cubeSize)
 		#normImg = normalizeStd(image.clip(min=-1000, max=700))
 
 		if self.allNodules: nodule=1.0

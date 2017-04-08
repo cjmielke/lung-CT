@@ -58,7 +58,9 @@ class SparseImageSource():
 		imgNum = row['imgNum']
 
 		cs = self.cubeSize
-		for cube, position in self.getCubesAndPositions(row, posType='real'):
+		#for cube, position in self.getCubesAndPositions(row, posType='real'):
+		cubes, positions = self.getCubesAndPositions(row, posType='real')
+		for cube, position in zip(cubes, positions):
 			z, y, x = position
 			image[z:z + cs, y:y + cs, x:x + cs] = cube
 

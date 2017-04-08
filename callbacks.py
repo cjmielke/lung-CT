@@ -50,6 +50,11 @@ class fgLogger(Callback):
 		self.logDir = logDir
 		self.log = {}
 
+		self.keys = ['imgOut_loss', 'acc', 'cancer_acc', 'cancer_loss', 'loss', 'nodule_loss', 'diam_loss', 'nodule_acc', 'diam_mean_absolute_error']
+		valKeys = ['val_'+k for k in self.keys]
+		self.keys.extend(valKeys)
+
+
 	def on_train_begin(self, logs={}):
 		print 'keys in logs: ', logs.keys()
 
@@ -63,7 +68,9 @@ class fgLogger(Callback):
 
 		self.writeLog(lastN=20)
 
-	def writeToSQL(self, table, outTsv):
+
+
+	def writeToSQL(self, outTsv, args, table='experiments', lastN=30):
 		DB = 'fglab'
 		from sqlalchemy import create_engine
 		MYSQL_USER = 'root'
@@ -73,13 +80,26 @@ class fgLogger(Callback):
 
 		DF = pandas.DataFrame()
 		s = pandas.Series({})
-		#s.name = 
+
+		# store program arguments
+		for arg, val in args.__dict__.iteritems():
+			s[arg] = val
 
 
-		DF = DF.append(s)
-		DF.to_sql(table, engine, flavor='sqlalchemy', schema=DB, if_exists='append')
 
-		DF.to_csv(outTsv, sep='\t')
+		for key in self.keys:
+			if key in self.log:
+				arr =  np.asarray(self.log[key])
+				mean = arr[-lastN:].mean()
+				last = arr[-1]
+
+				s[key+'_last'] = last
+				s[key+'_mean'] = mean
+
+		DF = DF.append(s, ignore_index=True)
+		DF.to_csv(outTsv, sep='\t', index=False)
+		DF.to_sql(table, engine, schema=DB, if_exists='append', index=False)
+
 
 
 	def writeLog(self, lastN=30):
@@ -91,20 +111,9 @@ class fgLogger(Callback):
 				'_scores': {}
 			}
 
-
-			for key in ['imgOut_loss', 'acc', 'cancer_acc', 'cancer_loss', 'loss']:
+			for key in self.keys:
 				if key in self.log:
 					o['_scores'][key] = round(np.asarray(self.log[key])[-lastN:].mean(), 2)
-				key = 'val_'+key
-				if key in self.log:
-					o['_scores'][key] = round(np.asarray(self.log[key])[-lastN:].mean(), 2)
-
-
-			if 'cancer_acc' in self.log:
-				o['_scores']['cancer_acc'] = round(np.asarray(self.log['cancer_acc'])[-lastN:].mean(), 2)
-			if 'val_cancer_acc' in self.log:
-				o['_scores']['val_cancer_acc'] = round(np.asarray(self.log['val_cancer_acc'])[-lastN:].mean(), 2)
-
 
 
 			#print o
@@ -134,42 +143,6 @@ class fgLogger(Callback):
 
 				]
 			}
-
-
-			if 'predictions_fmeasure' in self.log:
-				chart = {
-						'axis': {
-							'x': {'label': 'Iteration'},
-							'y': {'label': 'fmeasure'}
-						},
-						'columnNames': ['train', 'val'],
-						'data': {
-							'columns': [
-								self.log['predictions_fmeasure'],
-								self.log['val_predictions_fmeasure']
-							]
-						}
-					}
-				o['_charts'].append(chart)
-
-			if 'acc' in self.log and 'v_AUC' in self.log:
-				chart = {
-						'axis': {
-							'x': {'label': 'Iteration'},
-							'y': {'label': 'AUC'}
-						},
-						'columnNames': ['train', 'val'],
-						'data': {
-							'columns': [
-								self.log['t_AUC'],
-								self.log['v_AUC']
-							]
-						}
-					}
-				o['_charts'].append(chart)
-
-
-
 
 			j = json.dumps(o)
 			lf.write(j)

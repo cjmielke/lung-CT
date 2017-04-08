@@ -10,8 +10,10 @@ TODO:
 
 
 Organize files to make them more clear
-    We need resampled and segmented datasets, each with their own downstream cube sources for training
-    IT MIGHT BE A BAD IDEA TO TRAIN ON NON-SEGMENTED LUNGS BUT MAKE CAM-MAPS ON SEGMENTED ONES
+    Resampled
+        Nodule detector
+    Segmented
+        Nodule detector
     
 Try finding bounding box of CAM images and scaling them to a common size
     SCALED_CAM_IMAGE_SHAPE

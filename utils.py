@@ -1,6 +1,9 @@
 import gc
+import glob
 import itertools
 import os
+import shutil
+
 import tables
 import threading
 
@@ -33,14 +36,22 @@ class LeafLock():
 
 
 
-def boundingBox(img):
+def boundingBox(img, channel=None):
 	imgMin = img.min()
 	img = img - imgMin
 	assert img.min() == 0.0, 'Image min should be %s but is %s' % (imgMin, img.min())
 
-	rows = np.any(img, axis=1)
-	cols = np.any(img, axis=0)
-	depth = np.any(img, axis=2)
+	if channel:
+		rows = np.any(img[:,:,:,channel], axis=1)
+		cols = np.any(img[:,:,:,channel], axis=0)
+		depth = np.any(img[:,:,:,channel], axis=2)
+	else:
+		rows = np.any(img, axis=1)
+		cols = np.any(img, axis=0)
+		depth = np.any(img, axis=2)
+
+
+
 	rmin, rmax = np.where(rows)[0][[0, -1]]
 	cmin, cmax = np.where(cols)[0][[0, -1]]
 	dmin, dmax = np.where(depth)[0][[0, -1]]
@@ -55,6 +66,8 @@ def boundingBox(img):
 
 	print 'original/cropped sizes : %s / %s ' % (img.shape, crop.shape)
 	return crop
+
+
 
 
 
@@ -183,7 +196,7 @@ def resample(image, spacing, new_spacing=[3,3,3], order=1):
 
 class ImageArray():
 
-	def __init__(self, arrayFile, tsvFile=None, leafName ='resampled'):
+	def __init__(self, arrayFile, tsvFile=None, leafName ='resampled', threadSafe=False):
 		"""
 		Utility function to open pytables arrays containing images and their corresponding pandas dataframes
 		:param arrayFile: path to a pytables array - this function will find a tsv file with the same name
@@ -204,9 +217,12 @@ class ImageArray():
 		self.DB = tables.open_file(arrayFile, mode='r')
 		self.array = self.DB.root.__getattr__(leafName)
 
+		if threadSafe: self.array = LeafLock(self.array)
+
 		assert len(self.DF) == len(self.array), 'DataFrame has %s rows but array has %s images' % (len(self.DF), len(self.array))
 
 		self.nImages = len(self.DF)
+
 
 
 def getImage(imageArray, row, convertType=True):
@@ -320,14 +336,14 @@ def augmentCube(cube):
 	return cube
 
 
-def prepCube(cube, augment=True):
-	cubeSize = cube.shape[0]
+def prepCube(cube, augment=True, cubeSize=None):
+	#cubeSize = cube.shape[0]
 	#cube = normalizeStd(cube)
 	cube = normalizeRange(cube,MAX_BOUND=500.0)
 	#cube = normalizeRange(cube,MAX_BOUND=1000.0)
 	size = cube.shape[0]
 
-	if cubeSize!=size:
+	if cubeSize and cubeSize!=size:
 		p = size-cubeSize
 		p = p/2
 		cube = cube[p:p+cubeSize, p:p+cubeSize, p:p+cubeSize]
@@ -347,10 +363,32 @@ def convertColsToInt(DF, columns):
 
 
 def forceImageIntoShape(image, DESIRED_SHAPE):
+
 	resized = np.zeros(DESIRED_SHAPE, dtype='int16')
+
 	xCopy = min(DESIRED_SHAPE[0], image.shape[0])
 	yCopy = min(DESIRED_SHAPE[1], image.shape[1])
 	zCopy = min(DESIRED_SHAPE[2], image.shape[2])
-	resized[:xCopy, :yCopy, :zCopy] = image[:xCopy, :yCopy, :zCopy]
+
+	if len(image.shape)==3:
+		resized[:xCopy, :yCopy, :zCopy] = image[:xCopy, :yCopy, :zCopy]
+	elif len(image.shape)==4:
+		resized[:xCopy, :yCopy, :zCopy, :] = image[:xCopy, :yCopy, :zCopy, :]
 
 	return resized
+
+
+def prepOutDir(OUTDIR, file):
+
+	if not os.path.exists(OUTDIR): os.makedirs(OUTDIR)
+	codeDir = OUTDIR + 'snap'
+	if not os.path.exists(codeDir): os.makedirs(codeDir)
+
+	thisDir = os.path.dirname(os.path.realpath(__file__))
+	print thisDir
+	for f in glob.glob(thisDir+ '/*.py'):
+		print f
+		shutil.copy(f, codeDir)
+
+
+

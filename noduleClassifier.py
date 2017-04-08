@@ -10,177 +10,32 @@ from generators import imageCubeGen, Batcher, CubeGen
 
 K.set_floatx('float32')
 K.set_image_dim_ordering('tf')
-from keras.optimizers import SGD
+
 from callbacks import fgLogger
 
-DATADIR = '/data/datasets/luna/resampled_order1/'
-DATASET = DATADIR+'resampled.h5'
-
-SSD_DATADIR = '/ssd/luna/resampled_order1/'
-SSD_DATASET = SSD_DATADIR + 'resampled.h5'
 
 import pandas
 
 from keras.layers import Dense, Dropout, BatchNormalization, Flatten
 from keras.layers import Input, Convolution3D, MaxPooling3D, UpSampling3D
 from keras.models import Model
-from utils import LeafLock
-
-def getVGG19Encoder(inputShape, delLayers=0):
-	from keras.applications.vgg19 import VGG19
-	height, width = inputShape
-	vggShape = (height, width, 3)
-	encoder = VGG19(include_top=False, input_shape=vggShape)
-	#encoder.load_weights('vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5')
-
-	if delLayers:
-		for k in xrange(0,delLayers):
-			encoder.layers.pop()
-		encoder.outputs = [encoder.layers[-1].output]
-		encoder.layers[-1].outbound_nodes = []
-
-	return encoder
+from utils import LeafLock, prepOutDir, ImageArray
 
 
-
-def getDeeperEncoder(inputShape):
-	height, width = inputShape
-	shape = (height, width, 3)
-
-
-	from nets import ResNet
-	encoder = ResNet(include_top=False, input_shape=shape)
-
-	return encoder
-
-
-
-def buildClassifier(inputShape, delLayers=8, sharedNeurons=128, cancerNeurons=32, ageWeight=1.0):
-
-	encoder = getEncoder(inputShape, delLayers=delLayers)
-	#encoder = getDeeperEncoder(inputShape)
-
-	input_img = encoder.input
-	x = encoder.outputs
-
-
-	x = BatchNormalization()(x)
-
-	flat = GlobalAveragePooling2D()(x)
-	#flat = Flatten(name='flatten')(x)
-
-
-	x = BatchNormalization()(flat)
-	x = Dense(sharedNeurons, activation='relu', name='shared')(x)
-	shared = Dropout(0.5)(x)
-
-	#shared = flat
-
-	x = Dense(cancerNeurons, activation='relu', name='fc2c')(shared)
-	x = Dropout(0.5)(x)
-	cancerClass = Dense(1, activation='sigmoid', name='predictions')(x)
-
-	x = Dense(cancerNeurons, activation='relu', name='fc2i')(shared)
-	x = Dropout(0.5)(x)
-	invasive = Dense(1, activation='sigmoid', name='invasive')(x)
-
-
-	'''
-	x = Dense(cancerNeurons, activation='relu', name='fc2fd')(shared)
-	x = Dropout(0.5)(x)
-	fdBC = Dense(1, activation='sigmoid', name='firstDegreeBc')(x)
-
-	x = Dense(16, activation='relu', name='fc2fdy')(shared)
-	x = Dropout(0.5)(x)
-	fdBCy = Dense(1, activation='sigmoid', name='firstDegreeBcYoung')(x)
-	'''
-
-	x = Dense(cancerNeurons, activation='relu', name='fc2a')(shared)
-	x = Dropout(0.5)(x) 
-	age = Dense(1, activation='sigmoid', name='age')(x)
-
-	x = Dense(cancerNeurons, activation='relu', name='fc2b')(shared)
-	x = Dropout(0.5)(x) 
-	bmi = Dense(1, activation='sigmoid', name='bmi')(x)
-
-	#model = Model(input=[input_img], output=[cancerClass], name='multiOut')
-	#model = Model(input=[input_img], output=[cancerClass, age], name='multiOut')
-	#model = Model(input=[input_img], output=[cancerClass, age, bmi, invasive, fdBC, fdBCy], name='multiOut')
-	#model = Model(input=[input_img], output=[cancerClass, age, bmi, invasive], name='multiOut')
-	model = Model(input=[input_img], output=[cancerClass, invasive, age, bmi], name='multiOut')
-	#model = Model(input=[input_img], output=[cancerClass, age, invasive], name='multiOut')
-	#model = Model(input=[input_img], output=[cancerClass], name='multiOut')
-
-	sgd = SGD(lr=0.1, decay=1e-06, momentum=0.9, nesterov=True)
-	model.compile(
-		#optimizer=sgd,
-		#optimizer='adadelta',
-		#optimizer='rmsprop',
-		#optimizer='adamax',
-		optimizer='nadam',
-		#loss='binary_crossentropy',
-		loss = {
-			#'predictions': 'binary_crossentropy',
-			'predictions': 'binary_crossentropy',
-			#'predictions': binary_crossentropy_with_ranking,
-			#'predictions': 'binary_crossentropy',
-			'invasive': 'binary_crossentropy',
-			#'firstDegreeBc' : 'binary_crossentropy',
-			#'firstDegreeBcYoung': 'binary_crossentropy',
-			#'age': 'kullback_leibler_divergence',
-			#'age': 'mse',
-			#'bmi': 'mse'
-			'age': 'binary_crossentropy',
-			'bmi': 'binary_crossentropy',
-			#'bmi': binary_crossentropy_with_ranking
-		},
-		loss_weights={
-			'predictions': 1.0,
-			'invasive': 1.0,
-			#'firstDegreeBc' : 0.5,
-			#'firstDegreeBcYoung': 1.0,
-			'age': ageWeight,
-			'bmi': ageWeight
-			#	'bmi': 1.0
-		},
-		#loss='msle',
-		#loss='kld',
-		metrics = {
-			'age': 'accuracy',
-			'bmi': 'accuracy',
-			'predictions': 'fmeasure',
-			'invasive': 'fmeasure'
-			#'firstDegreeBc': 'accuracy',
-			#'firstDegreeBcYoung': 'accuracy'
-		}
-		#metrics = {'imageOut': 'mse', 'predictions': ['accuracy', confusionFIXME]},
-	)
-
-	print model.summary()
-
-
-
-	return model
-
-
-
-def buildAutoencoder(inputShape, filters=64, filterScale=2, batchNorm=True, sharedNeurons=16):
+def buildModel(inputShape, args):
 
 
 	x,y,z = inputShape
 	input_img = Input(shape=(x, y, z, 1))
 	x = input_img
 
-	if batchNorm:
-		x = BatchNormalization()(x)
+	if args.batchNorm: x = BatchNormalization()(x)
 
+	fo = args.filters
+	fi = fo*2
 
-
-	fo = filters
-	fi = filters*filterScale
-
-
-	x = Convolution3D(fo, (3, 3, 3), activation='relu', padding='same')(x)
+	b = args.bconv
+	x = Convolution3D(fo, (b, b, b), activation='relu', padding='same')(x)
 	x = Convolution3D(fo, (3, 3, 3), activation='relu', padding='same')(x)
 	#x = MaxPooling3D((2, 2, 2), border_mode=border)(x)
 	x = MaxPooling3D(name='pool1')(x)
@@ -189,7 +44,7 @@ def buildAutoencoder(inputShape, filters=64, filterScale=2, batchNorm=True, shar
 	#x = MaxPooling3D((2, 2, 2 ), border_mode=border)(x)
 
 	x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
-	x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
+	if args.doubleLayers: x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
 	x = MaxPooling3D(name='pool2')(x)
 
 	#x = Convolution3D(8, cs, cs, cs, activation='relu', border_mode=border)(x)
@@ -199,66 +54,51 @@ def buildAutoencoder(inputShape, filters=64, filterScale=2, batchNorm=True, shar
 	encoded = x
 	encoder = Model(inputs=[input_img], outputs=[encoded])
 
-	# at this point the representation is (nFilters, 13, 16, 13) i.e. 128-dimensional    (find with encoder.output_shape)
-
-	#x = Convolution3D(nFilters, cs, cs, cs, activation='relu', border_mode=border)(x)
-	#x = Convolution3D(nFilters, cs, cs, cs, activation='relu', border_mode=border)(x)
-	#x = UpSampling3D((2, 2, 2))(x)
-	#x = Convolution3D(8, cs, cs, cs, activation='relu', border_mode=border)(x)
-	#x = Convolution3D(8, cs, cs, cs, activation='relu', border_mode=border)(x)
-
-	if batchNorm:
-		x = BatchNormalization()(x)
-
-	x = UpSampling3D()(x)
-	x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
-	x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
-
-	x = UpSampling3D()(x)
-	x = Convolution3D(fo, (3, 3, 3), activation='relu', padding='same')(x)
-	decoded = Convolution3D(1, (3, 3, 3), activation='relu', padding='same', name='imgOut')(x)
-
 
 	flat = Flatten()(encoded)
-	shared = Dense(sharedNeurons)(flat)
-
+	if args.dropout: flat = Dropout(args.dropout)(flat)
+	shared = Dense(args.sharedNeurons)(flat)
 	nodule = Dense(1, activation='sigmoid', name='nodule')(shared)
 
 	db = Dense(16)(flat)
 	diam = Dense(1, activation='relu', name='diam')(db)
 
+	loss = {
+		'nodule': 'binary_crossentropy',
+		'diam': 'hinge'
+	}
+	metrics = {
+		'nodule': 'accuracy',
+		'diam': 'mae'
+	}
+
+	if args.autoencoder:
+
+		loss['imgOut'] = 'mse'
+		metrics['imgOut'] = 'mae'
+
+		x = UpSampling3D()(x)
+		x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
+		if args.doubleLayers: x = Convolution3D(fi, (3, 3, 3), activation='relu', padding='same')(x)
+
+		x = UpSampling3D()(x)
+		if args.doubleLayers: x = Convolution3D(fo, (3, 3, 3), activation='relu', padding='same')(x)
+		decoded = Convolution3D(1, (3, 3, 3), activation='relu', padding='same', name='imgOut')(x)
+
+		model = Model(inputs=[input_img], outputs=[nodule, diam, decoded], name='multiOut')
+
+	else:
+
+		model = Model(inputs=[input_img], outputs=[nodule, diam], name='multiOut')
 
 
-	autoencoder = Model(inputs=[input_img], outputs=[nodule, diam, decoded], name='multiOut')
 
 	print 'hidden layer shape: ', encoder.output_shape
 
+	model.compile( optimizer='adadelta', loss=loss, metrics=metrics )
 
-	# optomizers: adadelta, sgd, rmsprop, adam, nadam
-
-	# faster than nadam!
-	autoencoder.compile(
-		#optimizer='sgd',
-		optimizer='adadelta',
-		#optimizer='nadam',
-		#loss='mse',
-		#loss='binary_crossentropy',
-		loss={
-			'imgOut': 'mse',
-			'nodule': 'binary_crossentropy',
-			'diam': 'hinge'
-		},
-		metrics={
-			'imgOut': 'mae',
-			'nodule': 'accuracy',
-			'diam': 'mae'
-		}
-	)
-
-
-	print autoencoder.summary()
-
-	return encoder, autoencoder
+	print model.summary()
+	return model
 
 
 
@@ -272,23 +112,25 @@ if __name__ == '__main__':
 	import argparse, os
 	parser = argparse.ArgumentParser(description='Process some integers.')
 	parser.add_argument('-_id', dest='_id', default=None, type=str)
-	parser.add_argument('-optimizer', dest='optimizer', default='nadam', type=str)
-
-	parser.add_argument('-images', dest='images', default='imagesM', type=str)
-
-	parser.add_argument('-delLayers', dest='delLayers', default="0", type=int)
-	parser.add_argument('-ageWeight', dest='ageWeight', default="0.5", type=float)
-
-	parser.add_argument('-scale', dest='scale', default="256.0", type=float)
-	parser.add_argument('-subFrac', dest='subFrac', default="0.0", type=float)
-
 	parser.add_argument('-sharedNeurons', dest='sharedNeurons', default=64, type=int)
-	parser.add_argument('-cancerNeurons', dest='cancerNeurons', default=16, type=int)
-
+	parser.add_argument('-optimizer', dest='optimizer', default='nadam', type=str)
+	parser.add_argument('-bconv', dest='bconv', default=3, type=int)
+	parser.add_argument('-autoencoder', dest='autoencoder', default=1, type=int)
+	parser.add_argument('-batchNorm', dest='batchNorm', default=0, type=int)
 	parser.add_argument('-batchSize', dest='batchSize', default=32, type=int)
+	parser.add_argument('-filters', dest='filters', default=16, type=int)
+	parser.add_argument('-dropout', dest='dropout', default=0, type=float)
+	parser.add_argument('-doubleLayers', dest='doubleLayers', default=1, type=int)
+
+	#parser.add_argument('-optimizer', dest='optimizer', default='adadelta', type=str)
+
+	#parser.add_argument('-scale', dest='scale', default="256.0", type=float)
+	#parser.add_argument('-subFrac', dest='subFrac', default="0.0", type=float)
+
+
+
 	parser.add_argument('-cubeSize', dest='cubeSize', default=32, type=int)
 
-	parser.add_argument('-filters', dest='filters', default=32, type=int)
 
 
 	args = parser.parse_args()
@@ -296,12 +138,24 @@ if __name__ == '__main__':
 	cubeSize = args.cubeSize
 
 
-	if args._id: OUTDIR = '/home/cosmo/lung/jobs/%s/' % args._id
+
+
+	EXPERIMENT_ID = 'noduleExp2'
+
+	if args._id: OUTDIR = '/home/cosmo/lung/jobs/%s/%s/' % ( EXPERIMENT_ID, args._id)
 	else:  OUTDIR = '/modelState/'
-	if not os.path.exists(OUTDIR): os.makedirs(OUTDIR)
+	prepOutDir(OUTDIR, __file__)
 
 
 
+	DATADIR = '/data/datasets/luna/resampled_order1/'
+	DATASET = DATADIR + 'resampled.h5'
+
+	SSD_DATADIR = '/ssd/luna/resampled_order1/'
+	SSD_DATASET = SSD_DATADIR + 'resampled.h5'
+
+
+	'''
 	DB = tables.open_file(DATASET, mode='r')
 	images = DB.root.resampled
 	images = LeafLock(images)
@@ -311,6 +165,13 @@ if __name__ == '__main__':
 	#imagesSSD = LeafLock(imagesSSD)
 
 	imageDF = pandas.read_csv(DATADIR+'resampledImages.tsv', sep='\t')
+	'''
+
+
+	resampledImages = ImageArray(SSD_DATADIR + 'resampled.h5', tsvFile=DATADIR+'resampledImages.tsv')
+	imageDF, imagesSSD = resampledImages.DF, resampledImages.array
+	#imagesSSD = LeafLock(imagesSSD)
+
 	trainImagesDF = imageDF[imageDF.imgNum % 4 != 0]
 	valImagesDF = imageDF[imageDF.imgNum % 4 == 0]
 	assert len( set(trainImagesDF.imgNum).intersection(set(valImagesDF.imgNum))  ) == 0
@@ -324,7 +185,7 @@ if __name__ == '__main__':
 	tGen = imageCubeGen(imagesSSD, trainImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
 	vGen = imageCubeGen(imagesSSD, valImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
 
-
+	# generators from pre-extracted cubes
 	candidateGen = CubeGen(DATADIR + 'candidateCubes.h5', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
 	noduleGen = CubeGen(DATADIR + 'noduleCubes.h5', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
 
@@ -338,25 +199,18 @@ if __name__ == '__main__':
 	#classifier = buildClassifier(inputShape, delLayers=args.delLayers, sharedNeurons=args.sharedNeurons, cancerNeurons=args.cancerNeurons, ageWeight=args.ageWeight)
 
 	inputShape = (cubeSize, cubeSize, cubeSize)
-	encoder, autoencoder = buildAutoencoder(inputShape, filters=args.filters)
+	model = buildModel(inputShape, args)
+
+
+	#stratifiedQ = Batcher( tGen, vGen,
+	#	trainStratified=noduleGen.trainGen,
+	#	valStratified=noduleGen.valGen, batchSize=args.batchSize)
 
 
 	stratifiedQ = Batcher(
-		tGen, vGen,
-		trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen, batchSize=args.batchSize)
-
-	'''
-	for batch in stratifiedQ.trainGen:
-		arrays, targets = batch
-		for c, t in zip(arrays,targets['nodule']):
-			print c.mean(), t
-		print type(batch), len(batch)
-	'''
-
-	#stratifiedQ = Batcher(
-	#	candidateGen.trainGen, candidateGen.valGen,
-	#	trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen,
-	#	batchSize=args.batchSize)
+		candidateGen.trainGen, candidateGen.valGen,
+		trainStratified=noduleGen.trainGen, valStratified=noduleGen.valGen,
+		batchSize=args.batchSize)
 
 	#tester = testDSBdata(period=10, numImages=2)
 
@@ -367,12 +221,12 @@ if __name__ == '__main__':
 
 	lh = fgLogger(OUTDIR)
 
-	autoencoder.fit_generator(
+	model.fit_generator(
 		stratifiedQ.trainGen,
 		verbose=2,
-		epochs=400,
-		#samples_per_epoch=args.batchSize,
-		steps_per_epoch=1,
+		epochs=200,
+		samples_per_epoch=args.batchSize,
+		#steps_per_epoch=1,
 		callbacks=[tb, lh],
 		#class_weight=classWeight,
 		validation_data=stratifiedQ.valGen,
@@ -382,15 +236,15 @@ if __name__ == '__main__':
 		#nb_val_samples=64
 	)
 
-	autoencoder.save(OUTDIR + 'lungAutoencoder.h5')
+	model.save(OUTDIR + 'lungAutoencoder.h5')
 
 	lh.writeLog(lastN=100)
 
+	lh.writeToSQL(OUTDIR+'exp.tsv', args, table='noduleExp2')
 
 
 
 
-	DB.close()
 
 
 

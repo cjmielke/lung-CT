@@ -1,7 +1,9 @@
 #!/usr/bin/env python2.7
+from Queue import Queue
+from threading import Thread
 
 import tables
-
+tables.set_blosc_max_threads(6)
 import pandas
 import numpy
 from tqdm import trange
@@ -26,11 +28,8 @@ class SparseImageSource():
 		return cubes
 
 	def getCubesAndPositions(self, row, posType=None):
-
-		imgNum = row['imgNum']
-
 		assert posType is not None, 'You must select a position type ... in cube units or real voxels'
-
+		imgNum = row['imgNum']
 		cubeRows = self.DF[self.DF.imgNum==imgNum]
 
 		cubes, positions = [], []
@@ -45,7 +44,6 @@ class SparseImageSource():
 			pos = (z, y, x)
 
 			positions.append(pos)
-
 			cubes.append(cube)
 
 		return cubes, positions
@@ -92,30 +90,53 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 
 
 	DBo = tables.open_file(arrayOut, mode='w')
-	filters = tables.Filters(complevel=5, complib='blosc:snappy')      # 7.7sec / 1.2 GB   (14 sec 1015MB if precision is reduced)           140s 3.7GB
+	#filters = tables.Filters(complevel=1, complib='blosc:snappy')      # 7.7sec / 1.2 GB   (14 sec 1015MB if precision is reduced)           140s 3.7GB
+	filters = tables.Filters(complevel=1, complib='lzo')      # 7.7sec / 1.2 GB   (14 sec 1015MB if precision is reduced)           140s 3.7GB
+	#filters = None
 	expectedCubesPerImage = 700
 	cubesArray = DBo.create_earray(DBo.root, 'cubes', atom=tables.Int16Atom(shape=CUBE_SHAPE), shape=(0,),
 							  expectedrows=segImages.nImages * expectedCubesPerImage, filters=filters)
 
 
-	cubeDF = pandas.DataFrame()
-
+	#cubeDF = pandas.DataFrame()
+	cubesList = []
 	cubeNum = 0
-	for i in trange(segImages.nImages):
-		row = segImages.DF.iloc[i]
-		image, _ = getImage(segImages.array, row)
+
+	def imageReader(Q):
+		for i in trange(segImages.nImages):
+			row = segImages.DF.iloc[i]
+			image, _ = getImage(segImages.array, row)
+			#image = numpy.zeros((750, 750, 750))
+			Q.put((row,image))
+		Q.put(None)
+
+
+	imageQ = Queue(maxsize=2)
+
+	t = Thread(target=imageReader, args=(imageQ,))
+	t.daemon = True
+	t.start()
+
+	while True:
+		res = imageQ.get()
+		if res is None :
+			imageQ.task_done()
+			break
+
+		row, image = res
+
 		print image.shape
 
-
-		cubes, positions = getImageCubes(image, cubeSize, prep=False)		# extract raw cubes from image
+		cubes, positions = getImageCubes(image, cubeSize, prep=False)  # extract raw cubes from image
 		print 'Got %d cubes' % len(cubes)
 
+		print 'saving'
 		for cube, pos in zip(cubes, positions):
-
 			cubeShape = cube.shape[0]
-			realPos = pos*cubeShape
+			realPos = pos * cubeShape
 
-			s = pandas.Series({
+			d = {
+				'cubeNum': cubeNum,
 				'imgNum': row['imgNum'],
 				'posZ': pos[0],
 				'posY': pos[1],
@@ -123,15 +144,23 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 				'realZ': realPos[0],
 				'realY': realPos[1],
 				'realX': realPos[2]
-			})
-			s.name = cubeNum
+			}
 			cubeNum += 1
-			cubeDF = cubeDF.append(s)
-			#print cube.min(), cube.mean(), cube.max()
-			cubesArray.append([cube])
+			cubesList.append(d)
+			#cubeDF = cubeDF.append(s)
+			# print cube.min(), cube.mean(), cube.max()
+
+			#cubesArray.append([cube])
+
+		if len(cubes): cubesArray.append(cubes)
+
+		assert len(cubesArray) == len(cubesList)
+
+		imageQ.task_done()
 
 
-
+	cubeDF = pandas.DataFrame(cubesList)
+	cubeDF = cubeDF.set_index('cubeNum')
 
 	assert len(cubeDF) == len(cubesArray)
 
@@ -139,19 +168,18 @@ def extractNonzero(arrayFile, arrayOut, cubeSize=32):
 
 
 	cubeDF = convertColsToInt(cubeDF, cubeDF.columns)
-
-	#cubeDF.imgNum = cubeDF.imgNum.astype('int')
-	#cubeDF.posZ = cubeDF.posZ.astype('int')
-	#cubeDF.posY = cubeDF.posY.astype('int')
-	#cubeDF.posX = cubeDF.posX.astype('int')
-	#cubeDF.realZ = cubeDF.realZ.astype('int')
-	#cubeDF.realY = cubeDF.realY.astype('int')
-	#cubeDF.realX = cubeDF.realX.astype('int')
-
 	cubeDF.to_csv(tsvOut, sep='\t', index_label='cubeNum')
 
 	DBo.close()
 	segImages.DB.close()
+
+	imageQ.join()
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
@@ -161,9 +189,14 @@ if __name__ == '__main__':
 	#sys.exit(0)
 
 
-	DATADIR = '/data/datasets/lung/resampled_order1/'
+	#DATADIR = '/data/datasets/lung/resampled_order1/'
+	#DATADIR = '/ssd/lung/resampled_order1/'
+
+	DATADIR = '/data/datasets/lung/stage2/resampled_order1/'
 	arrayFile = DATADIR + 'segmented.h5'
-	arrayOut = DATADIR + 'segmentedNonzero.h5'
+
+	#arrayOut = DATADIR + 'segmentedNonzeroLessStrict.h5'
+	arrayOut = '/data/datasets/lung/stage2/resampled_order1/segmentedNonzeroLessStrict.h5'
 
 	extractNonzero(arrayFile, arrayOut)
 

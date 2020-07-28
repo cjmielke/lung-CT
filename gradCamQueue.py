@@ -1,5 +1,7 @@
 #!/usr/bin/env python2.7
 import argparse
+from Queue import Queue
+from threading import Thread
 
 import keras
 import keras.backend as K
@@ -173,7 +175,7 @@ def saliencyMapsFromList(cubes, saliency_fn):
 	return maps
 
 
-
+11111111111111111111111111
 
 
 
@@ -397,23 +399,25 @@ def testAndVisualize(DF, array, model, modelFile):
 
 
 def buildTrainingSet(DF, inArray, outArray, storeSourceImg=True):
+
+
+	#DF = DF.head(573).tail(10)
+
 	sparseImages = SparseImageSource(inArray)
 	outTsv = outArray.replace('.h5', '.tsv')
 
 
 
 	# single output neuron cams
-	#noduleGrad, cubeCamSize  = buildGradientFunction(model)
+	noduleGrad, cubeCamSize  = buildGradientFunction(model)
 	#diamGrad, cubeCamSize  = buildGradientFunction(model, output='diam')
-	#gradientFunctions = [noduleGrad]
+	gradientFunctions = [noduleGrad]
 
 
 
 	# softmax output models
-	noNodule, cubeCamSize  = buildSoftmaxGradientFunction(model, 0)
-	smallNodule, cubeCamSize = buildSoftmaxGradientFunction(model, 1)
-	bigNodule, cubeCamSize = buildSoftmaxGradientFunction(model, 2)
-	gradientFunctions = [noNodule, smallNodule, bigNodule]
+	#noduleGrad, cubeCamSize  = buildSoftmaxGradientFunction(model, 0)
+
 
 
 
@@ -428,28 +432,38 @@ def buildTrainingSet(DF, inArray, outArray, storeSourceImg=True):
 	cams = DBo.create_earray(DBo.root, 'cams', atom=tables.Float32Atom(shape=CAM_SHAPE), shape=(0,), expectedrows=len(DF), filters=filters)
 
 	camImageDF = pandas.DataFrame()
-
+	#camImages = []
 
 	#DF = DF.head(20)
 
 
-	for index, row in tqdm(DF.iterrows(), total=len(DF)):
-		#print row
-		cancer = row['cancer']
+	def cubeDecompressor(Q):
+		for index, row in tqdm(DF.iterrows(), total=len(DF)):
+			# print row
+			row = row.copy(deep=True)
+			cancer = row['cancer']
+			cubes, positions = sparseImages.getCubesAndPositions(row, posType='pos')
+			Q.put((row, cubes, positions))
+		Q.put(None)
 
-		#image, imgNum = getImage(segImages, row)						# slow
-		#camImage = makeCamImgFromImage(image, cubeSize)
-		#image = sparseImages.getImageFromSparse(row)					# faster
-		#camImage = makeCamImgFromImage(image, cubeSize)
 
-		# should be fastest
-		cubes, positions = sparseImages.getCubesAndPositions(row, posType='pos')
+	Q = Queue(maxsize=4)
+
+	t = Thread(target=cubeDecompressor, args=(Q,))
+	t.daemon = True
+	t.start()
+
+	while True:
+		res = Q.get()
+		if res is None:
+			Q.task_done()
+			break
+		row, cubes, positions = res
+
 		#camImage = makeCamImageFromCubes(cubes, positions, gradientFunctions, cubeCamSize, storeSourceImg=storeSourceImg)
 		camImage = makeCamImageFromCubesFaster(cubes, positions, gradientFunctions, cubeCamSize, storeSourceImg=storeSourceImg)
 
-
 		if camImage.mean() == 0: print 'THIS IMAGE IS BAD ========================'
-
 
 		print camImage.shape
 
@@ -457,23 +471,21 @@ def buildTrainingSet(DF, inArray, outArray, storeSourceImg=True):
 		print 'nodule image    mean %s    min %s    max %s : ' % (
 			camImage[:,:,:,0].mean(), camImage[:,:,:,0].min(), camImage[:,:,:,0].max())
 
-		#print 'diam image      mean %s    min %s    max %s : ' % (
-		#	camImage[:,:,:,1].mean(), camImage[:,:,:,1].min(), camImage[:,:,:,1].max())
+		print 'diam image      mean %s    min %s    max %s : ' % (
+			camImage[:,:,:,1].mean(), camImage[:,:,:,1].min(), camImage[:,:,:,1].max())
 
-		print 'source image      mean %s    min %s    max %s : ' % (
-			camImage[:,:,:,-1].mean(), camImage[:,:,:,-1].min(), camImage[:,:,:,-1].max())
-
-
+		#print 'source image      mean %s    min %s    max %s : ' % (
+		#	camImage[:,:,:,2].mean(), camImage[:,:,:,2].min(), camImage[:,:,:,2].max())
 
 		cam = forceImageIntoShape(camImage, CAM_SHAPE)
 		#cam = resize(camImage, CAM_SHAPE)
 
 		#crop = boundingBox(camImage, channel=0)
-		print cam.shape
-
+		print 'Cam shape: ', cam.shape
 
 		cams.append([cam])
 		camImageDF = camImageDF.append(row)
+		#camImages.append(row)
 		camImageDF.to_csv(outTsv, sep='\t')
 
 

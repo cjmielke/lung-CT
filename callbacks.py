@@ -50,7 +50,7 @@ class fgLogger(Callback):
 		self.logDir = logDir
 		self.log = {}
 
-		self.keys = ['imgOut_loss', 'acc', 'cancer_acc', 'cancer_loss', 'loss', 'nodule_loss', 'diam_loss', 'nodule_acc', 'diam_mean_absolute_error']
+		self.keys = ['imgOut_loss', 'acc', 'cancer_acc', 'cancer_loss', 'loss', 'nodule_loss', 'diam_loss', 'diam_acc', 'nodule_acc', 'diam_mean_absolute_error']
 		valKeys = ['val_'+k for k in self.keys]
 		self.keys.extend(valKeys)
 

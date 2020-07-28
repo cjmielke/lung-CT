@@ -4,8 +4,18 @@ fslmaths output.nii.gz -thr 300 out.nii.gz
 
 
 
+TOMORROW!
+
+run overnight will evaluate many nodule models ... with both kinds of output
+I will work with them to pick best cam strategy, based on cam generations
+
+will also try guided backprop if theres time ... there probably isn't!
+
+
 
 TODO:
+
+
 
 
 

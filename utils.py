@@ -37,6 +37,10 @@ class LeafLock():
 
 
 def boundingBox(img, channel=None):
+	print img.mean()
+
+	if img.mean()==0.0: return img
+
 	imgMin = img.min()
 	img = img - imgMin
 	assert img.min() == 0.0, 'Image min should be %s but is %s' % (imgMin, img.min())
@@ -304,7 +308,7 @@ def getImageCubes(image, cubeSize, filterBackground=True, prep=None, paddImage=F
 		assert cube.shape == (cubeSize, cubeSize, cubeSize)
 
 		if filterBackground:
-			if cube.mean() <= -1000: continue
+			if cube.mean() <= -1700: continue		# new threshold allows more lung/background borders in dataset ... this requires background to be at -2000
 
 		# apply same normalization as in training
 		if prep: cube = prepCube(cube, augment=False)
@@ -339,17 +343,19 @@ def augmentCube(cube):
 def prepCube(cube, augment=True, cubeSize=None):
 	#cubeSize = cube.shape[0]
 	#cube = normalizeStd(cube)
-	cube = normalizeRange(cube,MAX_BOUND=500.0)
+	#cube = normalizeRange(cube,MAX_BOUND=500.0)
+	cube = normalizeRange(cube, MAX_BOUND=700.0)
 	#cube = normalizeRange(cube,MAX_BOUND=1000.0)
 	size = cube.shape[0]
+
+	if augment: cube = augmentCube(cube)
+
 
 	if cubeSize and cubeSize!=size:
 		p = size-cubeSize
 		p = p/2
 		cube = cube[p:p+cubeSize, p:p+cubeSize, p:p+cubeSize]
 		assert cube.shape == (cubeSize, cubeSize, cubeSize)
-
-	if augment: cube = augmentCube(cube)
 
 	cube = numpy.expand_dims(cube, axis=3)		# insert dummy channel
 
@@ -364,7 +370,7 @@ def convertColsToInt(DF, columns):
 
 def forceImageIntoShape(image, DESIRED_SHAPE):
 
-	resized = np.zeros(DESIRED_SHAPE, dtype='int16')
+	resized = np.zeros(DESIRED_SHAPE, dtype='float32')
 
 	xCopy = min(DESIRED_SHAPE[0], image.shape[0])
 	yCopy = min(DESIRED_SHAPE[1], image.shape[1])

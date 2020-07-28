@@ -65,8 +65,9 @@ def segmentVol(vol):
 	#	segSlice = segmentSlice(slice)
 	#	newVol.append(segSlice)
 
+	threads = 5
 
-	newVol = Parallel(n_jobs=7, backend='threading')(delayed(segmentSlice)(slice) for slice in vol)
+	newVol = Parallel(n_jobs=threads, backend='threading')(delayed(segmentSlice)(slice) for slice in vol)
 
 
 	newVol = numpy.asarray(newVol)

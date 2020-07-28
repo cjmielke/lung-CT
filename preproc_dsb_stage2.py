@@ -7,12 +7,14 @@ import numpy as np # linear algebra
 import pandas
 from tqdm import tqdm
 
-from utils import resample
+from segmentation import segmentVol
+from utils import resample, convertColsToInt
 
 # change later
-
-INPUT_FOLDER = '/data/datasets/lung/data/stage1/'
-OUTPUT_FOLDER = '/data/datasets/lung/resampled_order1/'
+#INPUT_FOLDER = '/data/datasets/lung/sample_images/'
+#INPUT_FOLDER = '/data/datasets/lung/data/stage1/'
+INPUT_FOLDER = '/data/datasets/lung/stage2/stage2/'
+OUTPUT_FOLDER = '/data/datasets/lung/stage2/resampled_order1/'
 
 #OUTPUT_FOLDER = '/ssd/lung/resampled_order1/'
 
@@ -79,7 +81,7 @@ if __name__ == '__main__':
 	tables.set_blosc_max_threads(4)
 	#filters = tables.Filters(complevel=1, complib='blosc:lz4')      # 7.7sec / 1.2 GB   (14 sec 1015MB if precision is reduced)           140s 3.7GB
 	filters = tables.Filters(complevel=5, complib='blosc:snappy')
-	DB = tables.open_file(OUTPUT_FOLDER+'resampled.h5', mode='w', filters=None)
+	DB = tables.open_file(OUTPUT_FOLDER+'segmented.h5', mode='w', filters=None)
 	#images = DB.create_earray(DB.root, 'resampled', atom=tables.Int16Atom(shape=RESAMPLED_IMG_SHAPE), shape=(0,), expectedrows=len(file_list), filters=filters)
 	images = DB.create_carray(DB.root, 'resampled', atom=tables.Int16Atom(shape=RESAMPLED_IMG_SHAPE), shape=(len(patients),), filters=filters)
 
@@ -96,6 +98,9 @@ if __name__ == '__main__':
 	#for imgNum, row in enumerate(tqdm(labelsDF.iterrows(), total=len(patients))):
 	for imgNum, patientID in enumerate(tqdm(patients, total=len(patients))):
 
+		print imgNum, patientID
+
+		'''
 		rows = labelsDF[labelsDF.uuid == patientID]
 		if len(rows)==1:
 			row = rows.iloc[0]
@@ -106,7 +111,7 @@ if __name__ == '__main__':
 				'cancer': -1
 			})
 		else: raise ValueError('Fuck')
-
+		'''
 
 
 		#continue
@@ -150,21 +155,15 @@ if __name__ == '__main__':
 			'oShapeZ': originalShape[0],
 			'oShapeY': originalShape[1],
 			'oShapeX': originalShape[2],
-			'cancer': row.cancer,
-			'uuid': row.uuid
+			'uuid': patientID
 		})
 		s.name = imgNum
 		imageDF = imageDF.append(s)
 		#imageDF.imgNum = imageDF.imgNum.astype('int')
-		imageDF.shapeZ = imageDF.shapeZ.astype('int')
-		imageDF.shapeY = imageDF.shapeY.astype('int')
-		imageDF.shapeX = imageDF.shapeX.astype('int')
-		imageDF.cancer = imageDF.cancer.astype('int')
-		imageDF.oShapeZ = imageDF.oShapeZ.astype('int')
-		imageDF.oShapeY = imageDF.oShapeY.astype('int')
-		imageDF.oShapeX = imageDF.oShapeX.astype('int')
 
-		imageDF.to_csv(OUTPUT_FOLDER+'resampledImages.tsv', sep='\t', index_label='imgNum')
+
+		imageDF = convertColsToInt(imageDF, imageDF.columns)
+		imageDF.to_csv(OUTPUT_FOLDER+'segmented.tsv', sep='\t', index_label='imgNum')
 
 
 		resized = np.zeros(RESAMPLED_IMG_SHAPE, dtype='int16')
@@ -173,6 +172,12 @@ if __name__ == '__main__':
 		zCopy = min(RESAMPLED_IMG_SHAPE[2], resampled.shape[2])
 		resized[:xCopy, :yCopy, :zCopy] = resampled[:xCopy, :yCopy, :zCopy]
 
-		images[imgNum] = resized
 
+		#images[imgNum] = resized
+
+		segmented = segmentVol(resized)
+
+		images[imgNum] = segmented
+
+		print segmented.shape
 

@@ -16,7 +16,7 @@ from callbacks import fgLogger
 
 import pandas
 
-from keras.layers import Dense, Dropout, BatchNormalization, Flatten
+from keras.layers import Dense, Dropout, BatchNormalization, Flatten, GlobalAveragePooling3D
 from keras.layers import Input, Convolution3D, MaxPooling3D, UpSampling3D
 from keras.models import Model
 from utils import LeafLock, prepOutDir, ImageArray
@@ -55,22 +55,30 @@ def buildModel(inputShape, args):
 	encoder = Model(inputs=[input_img], outputs=[encoded])
 
 
-	flat = Flatten()(encoded)
+	#flat = Flatten()(encoded)
+
+	flat = GlobalAveragePooling3D()(encoded)
+
 	if args.dropout: flat = Dropout(args.dropout)(flat)
 	shared = Dense(args.sharedNeurons)(flat)
 	nodule = Dense(1, activation='sigmoid', name='nodule')(shared)
 
-	db = Dense(16)(flat)
-	diam = Dense(1, activation='relu', name='diam')(db)
 
-	loss = {
-		'nodule': 'binary_crossentropy',
-		'diam': 'hinge'
-	}
-	metrics = {
-		'nodule': 'accuracy',
-		'diam': 'mae'
-	}
+	loss = {'nodule': 'binary_crossentropy'}
+	metrics = {'nodule': 'accuracy'}
+
+
+	db = Dense(16)(flat)
+
+	if args.diam == 'linear':
+		diam = Dense(1, activation='relu', name='diam')(db)
+		loss['diam'] = 'mse'
+		metrics['diam'] = 'mae'
+	elif args.diam == 'softmax':
+		diam = Dense(3, activation='softmax', name='diam')(db)
+		loss['diam'] = 'categorical_crossentropy'
+		metrics['diam'] = 'accuracy'
+
 
 	if args.autoencoder:
 
@@ -95,7 +103,8 @@ def buildModel(inputShape, args):
 
 	print 'hidden layer shape: ', encoder.output_shape
 
-	model.compile( optimizer='adadelta', loss=loss, metrics=metrics )
+	#model.compile( optimizer='adadelta', loss=loss, metrics=metrics )
+	model.compile( optimizer=args.optimizer, loss=loss, metrics=metrics )
 
 	print model.summary()
 	return model
@@ -117,10 +126,13 @@ if __name__ == '__main__':
 	parser.add_argument('-bconv', dest='bconv', default=3, type=int)
 	parser.add_argument('-autoencoder', dest='autoencoder', default=1, type=int)
 	parser.add_argument('-batchNorm', dest='batchNorm', default=0, type=int)
-	parser.add_argument('-batchSize', dest='batchSize', default=32, type=int)
-	parser.add_argument('-filters', dest='filters', default=16, type=int)
-	parser.add_argument('-dropout', dest='dropout', default=0, type=float)
+	parser.add_argument('-batchSize', dest='batchSize', default=8, type=int)
+	parser.add_argument('-filters', dest='filters', default=32, type=int)
+	parser.add_argument('-dropout', dest='dropout', default=0.5, type=float)
 	parser.add_argument('-doubleLayers', dest='doubleLayers', default=1, type=int)
+
+	parser.add_argument('-diam', dest='diam', default='linear', type=str)
+
 
 	#parser.add_argument('-optimizer', dest='optimizer', default='adadelta', type=str)
 
@@ -140,7 +152,7 @@ if __name__ == '__main__':
 
 
 
-	EXPERIMENT_ID = 'noduleExp2'
+	EXPERIMENT_ID = 'noduleExp4'
 
 	if args._id: OUTDIR = '/home/cosmo/lung/jobs/%s/%s/' % ( EXPERIMENT_ID, args._id)
 	else:  OUTDIR = '/modelState/'
@@ -182,12 +194,12 @@ if __name__ == '__main__':
 	candidatesDF = pandas.read_csv(DATADIR+'resampledCandidates.tsv', sep='\t')#.merge(imageDF, on='imgNum')
 
 	# generators of arbitrary cubes from images
-	tGen = imageCubeGen(imagesSSD, trainImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
-	vGen = imageCubeGen(imagesSSD, valImagesDF, noduleDF, candidatesDF, cubeSize=cubeSize, autoencoder=True)
+	tGen = imageCubeGen(imagesSSD, trainImagesDF, noduleDF, candidatesDF, args)
+	vGen = imageCubeGen(imagesSSD, valImagesDF, noduleDF, candidatesDF, args)
 
 	# generators from pre-extracted cubes
-	candidateGen = CubeGen(DATADIR + 'candidateCubes.h5', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
-	noduleGen = CubeGen(DATADIR + 'noduleCubes.h5', trainImagesDF, valImagesDF, autoencoder=True, cubeSize=cubeSize)
+	candidateGen = CubeGen(DATADIR + 'candidateCubes.h5', trainImagesDF, valImagesDF, args)
+	noduleGen = CubeGen(DATADIR + 'noduleCubes.h5', trainImagesDF, valImagesDF, args)
 
 	#for imgNum, cube, targets in noduleGen.valGen:
 	#	print imgNum, cube.shape, cube.mean(), targets['nodule']
@@ -224,9 +236,9 @@ if __name__ == '__main__':
 	model.fit_generator(
 		stratifiedQ.trainGen,
 		verbose=2,
-		epochs=200,
+		epochs=100,
 		samples_per_epoch=args.batchSize,
-		#steps_per_epoch=1,
+		steps_per_epoch=1,
 		callbacks=[tb, lh],
 		#class_weight=classWeight,
 		validation_data=stratifiedQ.valGen,
@@ -236,11 +248,35 @@ if __name__ == '__main__':
 		#nb_val_samples=64
 	)
 
-	model.save(OUTDIR + 'lungAutoencoder.h5')
+	model.save(OUTDIR + 'model.h5')
 
 	lh.writeLog(lastN=100)
 
-	lh.writeToSQL(OUTDIR+'exp.tsv', args, table='noduleExp2')
+	lh.writeToSQL(OUTDIR+'exp.tsv', args, table=EXPERIMENT_ID)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

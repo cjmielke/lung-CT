@@ -14,19 +14,45 @@ VALIDATION_SIZE = 100
 VALIDATION_SPLIT = 0.2
 
 
-def getNoduleDiameter(row):
-	if row is None: return 0.0
+#def getNoduleDiameter(row):
+#	if row is None: return 0.0
+#	else: diam = row.get('diameter_mm',0.0)
+#	return diam
+
+
+def getNoduleDiameterVector(row):
+	if row is None: diam = 0.0
 	else: diam = row.get('diameter_mm',0.0)
+
+	vec = [1, 0, 0]
+
+	if diam > 0:
+		if diam < 6.0: vec = [0, 1, 0]
+		elif diam >= 6.0: vec = [0, 0, 1]
+
+	return vec
+
+def getNoduleDiameter(row):
+	if row is None: diam = 0.0
+	else: diam = row.get('diameter_mm',0.0)
+
 	return diam
 
 
+def getTargets(nodule, row, diamType='linear'):
+	targets = { 'nodule': nodule }
+	if diamType=='linear': targets['diam'] = getNoduleDiameter(row)
+	elif diamType=='softmax': targets['diam'] = getNoduleDiameterVector(row)
 
-
+	return targets
 
 
 class CubeGen:
 
-	def __init__(self, arrayFile, trainImagesDF, valImagesDF, autoencoder=False, cubeSize=None, tsvFile=None):
+	def __init__(self, arrayFile, trainImagesDF, valImagesDF, args, tsvFile=None):
+
+		self.autoencoder = args.autoencoder
+		self.diamType = args.diam
 
 		if not tsvFile: tsvFile = arrayFile.replace('.h5', '.tsv')
 
@@ -48,35 +74,34 @@ class CubeGen:
 			#self.array[4] *= 0		# tag a single array to see where it pops out
 
 		storedCubeSize = self.array[0].shape[0]
-		if cubeSize: self.cubeSize = cubeSize
+		if args.cubeSize: self.cubeSize = args.cubeSize
 		else: self.cubeSize = storedCubeSize		# else, infer from whats stored
 		assert self.cubeSize <= storedCubeSize
 
-		self.tNodulesDF = noduleDF.merge(trainImagesDF, on='imgNum').copy(deep=True)
-		self.vNodulesDF = noduleDF.merge(valImagesDF, on='imgNum').copy(deep=True)
 
 		# initialize the generators!
 		self.trainGen = self._trainGen()
 		self.valGen = self._valGen()
 
-		print 'Length of train/val cubes sets : ', len(self.tNodulesDF), len(self.vNodulesDF)
 
 
-		if 'class' in noduleDF.columns:
+		if 'cancer' in noduleDF.columns:
 			print 'candidates file given, filtering out nodules'
-			noduleDF = noduleDF[noduleDF['class']==0.0]
+			noduleDF = noduleDF[noduleDF['cancer']==0.0]
 			self.allNodules=False
-			print 'number of nodules in training: ', len(self.tNodulesDF[self.tNodulesDF['class']==1.0])
-			print 'number of non-nodules in training: ', len(self.tNodulesDF[self.tNodulesDF['class']!=1.0])
-			print 'number of nodules in val: ', len(self.vNodulesDF[self.vNodulesDF['class']==1.0])
-			print 'number of non-nodules in val: ', len(self.vNodulesDF[self.vNodulesDF['class']!=1.0])
 		else: self.allNodules=True
+
+		print noduleDF.columns
+
+		self.tNodulesDF = noduleDF.merge(trainImagesDF, on='imgNum').copy(deep=True)
+		self.vNodulesDF = noduleDF.merge(valImagesDF, on='imgNum').copy(deep=True)
+
+		print 'Length of train/val cubes sets : ', len(self.tNodulesDF), len(self.vNodulesDF)
 
 		trainingNodules = set(self.tNodulesDF.noduleNum)
 		valNodules = set(self.vNodulesDF.noduleNum)
 		assert len(trainingNodules.intersection(valNodules))==0
 
-		self.autoencoder = autoencoder
 
 	def ret(self, row):
 		noduleNum = int(row['noduleNum'])
@@ -86,13 +111,15 @@ class CubeGen:
 		#normImg = normalizeStd(image.clip(min=-1000, max=700))
 
 		if self.allNodules: nodule=1.0
-		else: nodule = row['class']
+		else: nodule = row['cancer']
 
-		targets = {
-			'nodule': nodule,
-			'diam': getNoduleDiameter(row),
-			#'candidate': 1.0
-		}
+		#targets = {
+		#	'nodule': nodule,
+		#	'diam': getNoduleDiameter(row),
+		#	#'candidate': 1.0
+		#}
+
+		targets = getTargets(nodule, row, diamType=self.diamType)
 
 		if self.autoencoder: targets['imgOut'] = cube
 		return [row['imgNum'], cube, targets]
@@ -117,7 +144,12 @@ class CubeGen:
 
 # outer loop is images - inner loop is over cubes ... returning labels based on dataframe lookups
 
-def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoencoder=False, atMost=200):
+def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, args, atMost=200):
+
+
+	cubeSize = args.cubeSize
+	autoencoder = args.autoencoder
+
 	while True:
 		for _, row in imageDF.iterrows():
 
@@ -150,11 +182,17 @@ def imageCubeGen(imageArray, imageDF, noduleDF, candidatesDF, cubeSize=32, autoe
 					diam = getNoduleDiameter(nodulesInCube.iloc[0])
 				else: diam = getNoduleDiameter(None)
 
-				targets = {
-					'nodule': (numNodules>0)*1.0,
-					#'candidate': (numCandidates>0)*1.0,
-					'diam' : diam
-				}
+				#targets = {
+				#	'nodule': (numNodules>0)*1.0,
+				#	#'candidate': (numCandidates>0)*1.0,
+				#	'diam' : diam
+				#}
+
+				if len(nodulesInCube): noduleRow = nodulesInCube.iloc[0]
+				else: noduleRow = None
+
+				nodule = (numNodules>0)*1.0
+				targets = getTargets(nodule, noduleRow, diamType=args.diam)
 
 				if autoencoder: targets['imgOut'] = cube
 
@@ -216,8 +254,9 @@ class Batcher:
 			del batchA
 			del batchB
 			shuffle(batch)
-			numPos = len([a for a in batch if a[2]['nodule']])
 			#assert numPos * 2 == len(batch)
+
+		numPos = len([a for a in batch if a[2]['nodule']])
 
 		#for n, _, _ in batch: assert n % 2 == 0
 		#for n, c, t in batch: assert c.mean() != 0.0
@@ -244,9 +283,11 @@ class Batcher:
 			del batchA
 			del batchB
 			shuffle(batch)
-			numPos = len([a for a in batch if a[2]['nodule']])
 			#assert numPos*2==len(batch)
 
+		#print batch
+
+		numPos = len([a for a in batch if a[2]['nodule']])
 		#numPos = len([a for a in batch if a[2]['nodule']])
 		#for n, c, t in batch: assert c.mean() != 0.0
 		print 'val POS/BATCHSIZE %s/%s' % (numPos, len(batch))					# prove that batches are the right balance for training/testing
